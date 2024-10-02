@@ -1,0 +1,47 @@
+select:
+  - name: Pilotwire mode (${zone_name})
+    platform: template
+    id: pilotwire_channel_${channel_number}_mode_select
+    optimistic: true
+    options:
+      - Comfort
+      - Eco
+      - Anti-frost
+      - Stop
+    on_value:
+      then:
+        - lambda: |-
+            switch (i) {
+              case 0:
+                id(positive_alt_channel_${channel_number}_switch).turn_off();
+                id(negative_alt_channel_${channel_number}_switch).turn_off();
+                break;
+              case 1:
+                id(positive_alt_channel_${channel_number}_switch).turn_on();
+                id(negative_alt_channel_${channel_number}_switch).turn_on();
+                break;
+              case 2:
+                id(positive_alt_channel_${channel_number}_switch).turn_off();
+                id(negative_alt_channel_${channel_number}_switch).turn_on();
+                break;
+              case 3:
+                id(positive_alt_channel_${channel_number}_switch).turn_on();
+                id(negative_alt_channel_${channel_number}_switch).turn_off();
+                break;
+            }
+
+switch:
+  - id: positive_alt_channel_${channel_number}_switch
+    platform: gpio
+    pin:
+      mcp23xxx: output_expander
+      number: ${positive_alt_pin_number}
+      mode:
+        output: true
+  - id: negative_alt_channel_${channel_number}_switch
+    platform: gpio
+    pin:
+      mcp23xxx: output_expander
+      number: ${negative_alt_pin_number}
+      mode:
+        output: true

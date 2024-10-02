@@ -1,0 +1,91 @@
+substitutions:
+  device_name: heating-controller
+  api_key: !secret api_key_heating_controller
+  ota_password: !secret ota_password_heating_controller
+
+packages:
+  wifi: !include inc/wifi.yaml
+  auth: !include inc/auth.yaml
+  current_sensor_1: !include
+    file: inc/current_sensor.yaml
+    vars:
+      zone_name: zone 1
+      ads1115_multiplexer: A0_GND
+      channel_number: 1
+  current_sensor_2: !include
+    file: inc/current_sensor.yaml
+    vars:
+      zone_name: zone 2
+      ads1115_multiplexer: A1_GND
+      channel_number: 2
+  current_sensor_3: !include
+    file: inc/current_sensor.yaml
+    vars:
+      zone_name: zone 3
+      ads1115_multiplexer: A2_GND
+      channel_number: 3
+  current_sensor_4: !include
+    file: inc/current_sensor.yaml
+    vars:
+      zone_name: zone 4
+      ads1115_multiplexer: A3_GND
+      channel_number: 4
+  pilotwire_channel_1: !include
+    file: inc/pilotwire_channel.yaml
+    vars:
+      zone_name: zone 1
+      channel_number: 1
+      positive_alt_pin_number: 7
+      negative_alt_pin_number: 6
+  pilotwire_channel_2: !include
+    file: inc/pilotwire_channel.yaml
+    vars:
+      zone_name: zone 2
+      channel_number: 2
+      positive_alt_pin_number: 5
+      negative_alt_pin_number: 4
+  pilotwire_channel_3: !include
+    file: inc/pilotwire_channel.yaml
+    vars:
+      zone_name: zone 3
+      channel_number: 3
+      positive_alt_pin_number: 3
+      negative_alt_pin_number: 2
+  pilotwire_channel_4: !include
+    file: inc/pilotwire_channel.yaml
+    vars:
+      zone_name: zone 4
+      channel_number: 4
+      positive_alt_pin_number: 1
+      negative_alt_pin_number: 0
+
+esphome:
+  name: ${device_name}
+
+# TODO: remove in production
+web_server:
+  port: 80
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+
+i2c:
+  scl: D1
+  sda: D2
+  scan: false
+
+ads1115:
+  - address: 0x48
+    continuous_mode: true
+
+spi:
+  clk_pin: D5
+  miso_pin: D6
+  mosi_pin: D7
+
+mcp23s08:
+  - id: output_expander
+    cs_pin: D8

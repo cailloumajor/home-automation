@@ -1,0 +1,13 @@
+sensor:
+  - platform: ads1115
+    multiplexer: ${ads1115_multiplexer}
+    gain: 6.144
+    id: ads1115_channel_${channel_number}_sensor
+  - platform: ct_clamp
+    sensor: ads1115_channel_${channel_number}_sensor
+    name: Heating current (${zone_name})
+    update_interval: 5s
+    filters:
+      - calibrate_linear:
+          - 0.0 -> 0.0
+          - 0.59 -> 5.57

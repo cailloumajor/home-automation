@@ -1,0 +1,7 @@
+{
+    "yaml.customTags": [
+        "!include scalar",
+        "!include mapping",
+        "!secret scalar"
+    ]
+}

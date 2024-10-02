@@ -1,0 +1,55 @@
+substitutions:
+  devicename: esplinky
+  api_key: !secret api_key_esplinky
+  ota_password: !secret ota_password_esplinky
+
+packages:
+  wifi: !include inc/wifi.yaml
+  auth: !include inc/auth.yaml
+
+esphome:
+  name: $devicename
+
+esp8266:
+  board: d1_mini
+
+logger:
+  baud_rate: 0
+  hardware_uart: UART1
+
+uart:
+  baud_rate: 9600
+  rx_pin: GPIO13
+  parity: EVEN
+  data_bits: 7
+  stop_bits: 1
+
+teleinfo:
+  historical_mode: false
+  update_interval: 30s
+
+sensor:
+  - platform: teleinfo
+    tag_name: EASF01
+    name: Energie active HC
+    unit_of_measurement: Wh
+    device_class: energy
+    state_class: total_increasing
+  - platform: teleinfo
+    tag_name: EASF02
+    name: Energie active HP
+    unit_of_measurement: Wh
+    device_class: energy
+    state_class: total_increasing
+  - platform: teleinfo
+    tag_name: IRMS1
+    name: Courant efficace
+    unit_of_measurement: A
+  - platform: teleinfo
+    tag_name: SINSTS
+    name: Puissance apparente
+    unit_of_measurement: VA
+  - platform: teleinfo
+    tag_name: UMOY1
+    name: Tension moyenne
+    unit_of_measurement: V
