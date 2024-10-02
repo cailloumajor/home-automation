@@ -1,7 +1,5 @@
 #!/usr/bin/sh
 
-set -x
-
 binding="--network=host"
 
 while getopts "d:" opt; do
