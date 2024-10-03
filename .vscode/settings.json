@@ -2,6 +2,7 @@
     "yaml.customTags": [
         "!include scalar",
         "!include mapping",
+        "!lambda scalar",
         "!secret scalar"
     ]
 }

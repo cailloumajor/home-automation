@@ -10,16 +10,14 @@ packages:
 esphome:
   name: $devicename
 
-esp8266:
-  board: d1_mini
-
-logger:
-  baud_rate: 0
-  hardware_uart: UART1
+esp32:
+  board: lolin_s2_mini
+  framework:
+    type: esp-idf
 
 uart:
   baud_rate: 9600
-  rx_pin: GPIO13
+  rx_pin: GPIO11
   parity: EVEN
   data_bits: 7
   stop_bits: 1
@@ -35,21 +33,69 @@ sensor:
     unit_of_measurement: Wh
     device_class: energy
     state_class: total_increasing
+
   - platform: teleinfo
     tag_name: EASF02
     name: Energie active HP
     unit_of_measurement: Wh
     device_class: energy
     state_class: total_increasing
+
   - platform: teleinfo
     tag_name: IRMS1
     name: Courant efficace
     unit_of_measurement: A
+    device_class: current
+
   - platform: teleinfo
     tag_name: SINSTS
     name: Puissance apparente
     unit_of_measurement: VA
+    device_class: apparent_power
+    on_value:
+      - sensor.template.publish:
+          id: power_ratio
+          state: !lambda return x / id(ref_power).state;
+
   - platform: teleinfo
     tag_name: UMOY1
     name: Tension moyenne
     unit_of_measurement: V
+    device_class: voltage
+
+  - platform: teleinfo
+    tag_name: PREF
+    id: ref_power
+    unit_of_measurement: VA
+    device_class: apparent_power
+    filters:
+      - multiply: 1000.0
+
+  - platform: template
+    name: Puissance apparente vs. abonnement
+    id: power_ratio
+    update_interval: never
+    unit_of_measurement: "%"
+    filters:
+      - multiply: 100.0
+    on_raw_value:
+      then:
+        - lambda: |-
+            if (isnan(x)) {
+              id(rgb_led).turn_off().perform();
+            } else {
+              // https://stackoverflow.com/a/7947812
+              float red = max(2.0 * x, 1.0);
+              float green = max(2.0 * (1.0 - x), 1.0);
+              float blue = 0.0;
+              id(rgb_led).turn_on().set_rgb(red, green, blue).set_brightness(0.5).perform();
+            }
+
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: GPIO7
+    num_leds: 1
+    rmt_channel: 0
+    chipset: WS2812
+    id: rgb_led
