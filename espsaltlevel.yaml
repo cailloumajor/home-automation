@@ -11,7 +11,7 @@ esphome:
   name: $devicename
 
 esp8266:
-  board: esp_wroom_02
+  board: d1_mini
 
 logger:
   level: INFO
@@ -22,14 +22,11 @@ deep_sleep:
   sleep_duration: 15min
 
 i2c:
-  sda: GPIO4
-  scl: GPIO5
 
 binary_sensor:
   - platform: homeassistant
-    id: deep_sleep_inhibit
-    name: Inhibit deep sleep from Home Assistant
-    entity_id: input_boolean.inhibition_sommeil_espsaltlevel
+    id: sleep_inhibited
+    entity_id: input_boolean.inhibit_${devicename}_sleep
     publish_initial_state: true
     on_press:
       then:
@@ -42,10 +39,15 @@ binary_sensor:
 
 sensor:
   - platform: adc
-    name: Tension MCU ${devicename}
-    pin: VCC
+    name: Tension batterie ${devicename}
+    pin: A0
     samples: 5
     update_interval: 2s
+    icon: mdi:battery
+    device_class: voltage
+    unit_of_measurement: V
+    filters:
+      - multiply: 4.4
   - platform: vl53l0x
     name: Hauteur sel adoucisseur
     update_interval: 2s
