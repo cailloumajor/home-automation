@@ -80,16 +80,19 @@ sensor:
       - multiply: 100.0
     on_raw_value:
       then:
-        - lambda: |-
-            if (isnan(x)) {
-              id(rgb_led).turn_off().perform();
-            } else {
-              // https://stackoverflow.com/a/7947812
-              float red = max(2.0 * x, 1.0);
-              float green = max(2.0 * (1.0 - x), 1.0);
-              float blue = 0.0;
-              id(rgb_led).turn_on().set_rgb(red, green, blue).set_brightness(0.5).perform();
-            }
+        - if:
+            condition:
+              lambda: return isnan(x);
+            then:
+              - light.turn_off:
+                  id: rgb_led
+            else:
+              - light.turn_on:
+                  id: rgb_led
+                  brightness: 0.5
+                  red: !lambda return min(2.0 * x, 1.0);
+                  green: !lambda return min(2.0 * (1.0 - min(x, 1.0f)), 1.0);
+                  blue: 0.0
 
 light:
   - platform: esp32_rmt_led_strip
