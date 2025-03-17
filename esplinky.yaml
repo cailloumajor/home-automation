@@ -99,6 +99,5 @@ light:
     rgb_order: GRB
     pin: GPIO7
     num_leds: 1
-    rmt_channel: 0
     chipset: WS2812
     id: rgb_led
