@@ -4,20 +4,29 @@ substitutions:
   ota_password: !secret ota_password_esplinky
 
 packages:
-  wifi: !include inc/wifi.yaml
   auth: !include inc/auth.yaml
 
 esphome:
   name: $devicename
 
 esp32:
-  board: lolin_s2_mini
+  variant: esp32h2
   framework:
     type: esp-idf
 
+# logger:
+#   level: DEBUG
+#   hardware_uart: USB_SERIAL_JTAG
+
+network:
+  enable_ipv6: true
+
+openthread:
+  tlv: 0e080000000000010000000300000f4a0300000f35060004001fffe00208a9ce48f7c9643e1b0708fd2087ff4b9aa2080510e0020c62fe11fcd69cdcea5947f0a35d030e68612d7468726561642d373830620102780b041069c8c1358dc2ffffda3b49ccc66a35a00c0402a0f7f8
+
 uart:
   baud_rate: 9600
-  rx_pin: GPIO11
+  rx_pin: GPIO13
   parity: EVEN
   data_bits: 7
   stop_bits: 1
@@ -97,7 +106,7 @@ sensor:
 light:
   - platform: esp32_rmt_led_strip
     rgb_order: GRB
-    pin: GPIO7
+    pin: GPIO8
     num_leds: 1
     chipset: WS2812
     id: rgb_led
