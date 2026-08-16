@@ -11,12 +11,11 @@ esphome:
 
 esp32:
   variant: esp32h2
-  framework:
-    type: esp-idf
 
-# logger:
-#   level: DEBUG
-#   hardware_uart: USB_SERIAL_JTAG
+logger:
+  level: INFO
+  # hardware_uart: USB_SERIAL_JTAG
+  baud_rate: 0
 
 network:
   enable_ipv6: true
@@ -55,12 +54,14 @@ sensor:
     name: Courant efficace
     unit_of_measurement: A
     device_class: current
+    state_class: measurement
 
   - platform: teleinfo
     tag_name: SINSTS
     name: Puissance apparente
     unit_of_measurement: VA
     device_class: apparent_power
+    state_class: measurement
     on_value:
       - sensor.template.publish:
           id: power_ratio
@@ -71,12 +72,14 @@ sensor:
     name: Tension moyenne
     unit_of_measurement: V
     device_class: voltage
+    state_class: measurement
 
   - platform: teleinfo
     tag_name: PREF
     id: ref_power
     unit_of_measurement: VA
     device_class: apparent_power
+    state_class: measurement
     filters:
       - multiply: 1000.0
 
@@ -85,6 +88,7 @@ sensor:
     id: power_ratio
     update_interval: never
     unit_of_measurement: "%"
+    state_class: measurement
     filters:
       - multiply: 100.0
     on_raw_value:

@@ -1,0 +1,4 @@
+[tools]
+"pipx:esphome" = "latest"
+python = "latest"
+uv = "latest"
