@@ -9,46 +9,70 @@ packages:
 
 esphome:
   name: $devicename
+  platformio_options:
+    board_build.flash_mode: dio
 
-esp8266:
-  board: d1_mini
+esp32:
+  board: lolin_c3_mini
+  framework:
+    type: esp-idf
 
 logger:
-  level: INFO
 
 deep_sleep:
   id: deep_sleep_1
-  run_duration: 10s
-  sleep_duration: 15min
 
 i2c:
 
 binary_sensor:
   - platform: homeassistant
-    id: sleep_inhibited
+    id: sleep_inhibited_${devicename}
     entity_id: input_boolean.inhibit_${devicename}_sleep
-    publish_initial_state: true
-    on_press:
-      then:
-        - logger.log: Deep sleep inhibited from Home Assistant
-        - deep_sleep.prevent: deep_sleep_1
-    on_release:
-      then:
-        - logger.log: Deep sleep enabled from Home Assistant
-        - deep_sleep.allow: deep_sleep_1
 
 sensor:
   - platform: adc
     name: Tension batterie ${devicename}
-    pin: A0
-    samples: 5
-    update_interval: 2s
+    id: battery_voltage_${devicename}
+    pin: GPIO3
+    attenuation: 12db
     icon: mdi:battery
     device_class: voltage
     unit_of_measurement: V
     filters:
-      - multiply: 4.4
+      - multiply: 2.0
+    on_value:
+      then:
+        - script.execute: check_all_published
   - platform: vl53l0x
     name: Hauteur sel adoucisseur
-    update_interval: 2s
+    id: salt_level_${devicename}
     device_class: distance
+    on_value:
+      then:
+        - script.execute: check_all_published
+
+script:
+  - id: check_all_published
+    mode: restart
+    then:
+      - if:
+          condition:
+            - api.connected:
+            - binary_sensor.is_off: sleep_inhibited_${devicename}
+          then:
+            - lambda: |-
+                static bool battery_voltage_published = false;
+                static bool salt_level_published = false;
+
+                if (!battery_voltage_published && id(battery_voltage_${devicename}).has_state()) {
+                  battery_voltage_published = true;
+                }
+                if (!salt_level_published && id(salt_level_${devicename}).has_state()) {
+                  salt_level_published = true;
+                }
+
+                if (battery_voltage_published && salt_level_published) {
+                  id(deep_sleep_1).set_run_duration(2 * 1000);
+                  id(deep_sleep_1).set_sleep_duration(15 * 60 * 1000);
+                  id(deep_sleep_1).begin_sleep();
+                }
