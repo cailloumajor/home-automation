@@ -6,30 +6,6 @@ substitutions:
 packages:
   wifi: !include inc/wifi.yaml
   auth: !include inc/auth.yaml
-  current_sensor_1: !include
-    file: inc/current_sensor.yaml
-    vars:
-      zone_name: zone 1
-      ads1115_multiplexer: A0_GND
-      channel_number: 1
-  current_sensor_2: !include
-    file: inc/current_sensor.yaml
-    vars:
-      zone_name: zone 2
-      ads1115_multiplexer: A1_GND
-      channel_number: 2
-  current_sensor_3: !include
-    file: inc/current_sensor.yaml
-    vars:
-      zone_name: zone 3
-      ads1115_multiplexer: A2_GND
-      channel_number: 3
-  current_sensor_4: !include
-    file: inc/current_sensor.yaml
-    vars:
-      zone_name: zone 4
-      ads1115_multiplexer: A3_GND
-      channel_number: 4
   pilotwire_channel_1: !include
     file: inc/pilotwire_channel.yaml
     vars:
@@ -71,15 +47,6 @@ esp8266:
 
 # Enable logging
 logger:
-
-i2c:
-  scl: D1
-  sda: D2
-  scan: false
-
-ads1115:
-  - address: 0x48
-    continuous_mode: true
 
 spi:
   clk_pin: D5

@@ -1,0 +1,42 @@
+substitutions:
+  devicename: espcurrent
+  api_key: !secret api_key_espcurrent
+  ota_password: !secret ota_password_espcurrent
+
+packages:
+  wifi: !include inc/wifi.yaml
+  auth: !include inc/auth.yaml
+
+esphome:
+  name: $devicename
+
+esp32:
+  board: lolin_s2_mini
+  framework:
+    type: esp-idf
+
+sensor:
+  - platform: adc
+    pin: GPIO1
+    id: adc_channel_1
+  - platform: adc
+    pin: GPIO2
+    id: adc_channel_2
+  - platform: adc
+    pin: GPIO3
+    id: adc_channel_3
+  - platform: adc
+    pin: GPIO4
+    id: adc_channel_4
+  - platform: ct_clamp
+    sensor: adc_channel_1
+    name: Current $devicename channel 1
+  - platform: ct_clamp
+    sensor: adc_channel_2
+    name: Current $devicename channel 2
+  - platform: ct_clamp
+    sensor: adc_channel_3
+    name: Current $devicename channel 3
+  - platform: ct_clamp
+    sensor: adc_channel_4
+    name: Current $devicename channel 4
