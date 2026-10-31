@@ -1,0 +1,47 @@
+# Logical envelopes only: no GPIO and no generation of a physical AC waveform.
+globals:
+  - id: ${zone_id}_mode
+    type: int
+    restore_value: false
+    initial_value: '5'
+  - id: ${zone_id}_cycle_start
+    type: uint32_t
+    restore_value: false
+    initial_value: '0'
+
+select:
+  - platform: template
+    id: ${zone_id}_select
+    name: ${zone_name} mode
+    icon: mdi:radiator
+    optimistic: true
+    restore_value: false
+    initial_option: Arrêt
+    # Indices correspond to fil_pilote_simulation::signal().
+    options:
+      - Confort
+      - Confort -1 °C
+      - Confort -2 °C
+      - Éco
+      - Hors-gel
+      - Arrêt
+    on_value:
+      - lambda: |-
+          id(${zone_id}_mode) = i;
+          id(${zone_id}_cycle_start) = millis();
+
+binary_sensor:
+  - platform: template
+    name: ${zone_name} simulation alternance positive
+    entity_category: diagnostic
+    lambda: |-
+      return fil_pilote_simulation::signal(
+        id(${zone_id}_mode),
+        uint32_t(millis() - id(${zone_id}_cycle_start))).positive;
+  - platform: template
+    name: ${zone_name} simulation alternance négative
+    entity_category: diagnostic
+    lambda: |-
+      return fil_pilote_simulation::signal(
+        id(${zone_id}_mode),
+        uint32_t(millis() - id(${zone_id}_cycle_start))).negative;

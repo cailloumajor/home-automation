@@ -1,0 +1,79 @@
+# V0.2: USB-powered prototype; all fil-pilote outputs are simulated.
+substitutions:
+  devicename: heating-controller
+  api_key: !secret api_key_heating_controller
+
+packages:
+  living: !include
+    file: inc/heating_zone.yaml
+    vars:
+      zone_id: living
+      zone_name: Séjour cuisine
+  bathroom: !include
+    file: inc/heating_zone.yaml
+    vars:
+      zone_id: bathroom
+      zone_name: Sèche-serviettes
+  bedroom_1: !include
+    file: inc/heating_zone.yaml
+    vars:
+      zone_id: bedroom_1
+      zone_name: Chambre 1
+  bedroom_2: !include
+    file: inc/heating_zone.yaml
+    vars:
+      zone_id: bedroom_2
+      zone_name: Chambre 2
+  bedroom_3: !include
+    file: inc/heating_zone.yaml
+    vars:
+      zone_id: bedroom_3
+      zone_name: Chambre 3
+  corridor: !include
+    file: inc/heating_zone.yaml
+    vars:
+      zone_id: corridor
+      zone_name: Couloir réserve
+
+esphome:
+  name: $devicename
+  friendly_name: Contrôleur de chauffage
+  includes:
+    - inc/fil_pilote_simulation.h
+
+esp32:
+  variant: esp32h2
+  framework:
+    type: esp-idf
+
+logger:
+  level: INFO
+  hardware_uart: USB_SERIAL_JTAG
+
+network:
+  enable_ipv6: true
+
+openthread:
+  device_type: FTD
+  tlv: !secret thread_dataset_tlv
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: $api_key
+
+# ESPHome 2026.10 inherits the API key for encrypted OTA.
+# inc/auth.yaml uses password-based OTA, so it is not included here.
+ota:
+  - platform: esphome
+    encryption:
+
+sensor:
+  - platform: uptime
+    name: Durée de fonctionnement
+    update_interval: 60s
+
+button:
+  - platform: restart
+    name: Redémarrer
+    entity_category: diagnostic
