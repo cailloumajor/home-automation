@@ -133,8 +133,13 @@ Home Assistant a été arrêté pour ce retrait, puis relancé : sa version
 du retrait de l'ancien MYGGSPRAY ou BILRESA. Le retrait des nœuds ne doit
 pas être confondu avec le nettoyage des anciennes entités du registre.
 Après relance, les cinq nouveaux nœuds sont disponibles et les fiches partagées
-préservées. Les 88 anciennes entités restent enregistrées : leur suppression
-par l'API administrative ou l'interface Home Assistant reste à effectuer.
+préservées. Les 88 anciennes entités et les trois anciennes fiches isolées
+ont ensuite été supprimées par l'API administrative Home Assistant, après
+un nouveau contrôle des références. Les 88 entités actives et les deux fiches
+partagées ont été préservées. Les huit entités principales répondent et
+« Contrôle lampe » est activée ; les trois automatisations gardent leurs cibles.
+Le jeton créé pour ce nettoyage a été révoqué, son refus confirmé par une
+nouvelle tentative d'authentification, puis sa copie locale effacée.
 
 Le renouvellement des clés ne retire pas le dataset de l'historique Git.
 L'assainissement de cet historique et des copies publiées reste à traiter
