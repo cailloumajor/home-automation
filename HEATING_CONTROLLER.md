@@ -142,8 +142,10 @@ Le jeton créé pour ce nettoyage a été révoqué, son refus confirmé par une
 nouvelle tentative d'authentification, puis sa copie locale effacée.
 
 Le renouvellement des clés ne retire pas le dataset de l'historique Git.
-L'assainissement de cet historique et des copies publiées reste à traiter
-séparément ; aucune réécriture ni publication forcée n'a été effectuée.
+L'utilisateur a choisi de conserver cet historique sans assainissement du
+dataset désormais compromis et remplacé. Ne pas réutiliser cet ancien dataset,
+y compris depuis une sauvegarde ou un ancien firmware. Le retrait des notes
+de session de l'historique local est une opération distincte.
 
 ## Installation relevée pour préparer la V0.3
 
