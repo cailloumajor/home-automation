@@ -99,8 +99,8 @@ remplace le dataset conservé en NVS par celui du YAML à chaque démarrage ;
 le banc LED hérite de cette option, a été validé et compilé, sans flash.
 L'API chiffrée des deux cartes a été vérifiée. Les six zones du contrôleur
 étaient à Arrêt après son redémarrage, sans modification de leur logique.
-Le diagnostic des mesures Linky manquantes est séparé dans
-`CODEX_HANDOFF_ESPLINKY.md` ; la connexion Thread d'esplinky fonctionne.
+Le diagnostic des mesures Linky manquantes est traité dans une session
+distincte ; la connexion Thread d'esplinky fonctionne.
 
 Après la création du réseau, l'annonce mDNS du Border Router était absente.
 Un redémarrage de l'application OpenThread Border Router l'a rétablie,
