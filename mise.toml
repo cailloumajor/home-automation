@@ -1,4 +1,8 @@
 [tools]
-"pipx:esphome" = "latest"
-python = "latest"
-uv = "latest"
+pipx = "latest"
+python = "3.14"
+tombi = "latest"
+
+[tools."pypi:esphome"]
+version = "2026.10"
+uvx = false
