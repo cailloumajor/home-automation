@@ -38,9 +38,6 @@ préférences KiCad `*.kicad_prl`, les verrous et sauvegardes KiCad. Les
 réglages d'éditeur déjà suivis dans le dépôt restent soumis aux conventions
 existantes ; ne pas les supprimer automatiquement.
 
-`CODEX_HANDOFF_ESPLINKY.md` est une note locale de reprise de session,
-ignorée par Git. Elle ne fait pas partie de la documentation du projet.
-
 ## Skills et serveurs MCP du projet
 
 Le skill local `.agents/skills/esphome/SKILL.md` est suivi dans Git.

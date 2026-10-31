@@ -11,7 +11,7 @@ Travailler depuis la racine du dépôt. Lire `mise.toml`, les YAML concernés et
 
 Conserver les points d'entrée YAML à la racine, les fichiers réutilisables dans `inc/` et le fichier local partagé `secrets.yaml` à la racine. Ne pas créer de hiérarchie parallèle `devices/`. Suivre les `packages`, `!include`, variables d'include et substitutions avant de modifier un fragment commun. Valider tous les points d'entrée affectés par un changement partagé ; les fragments `inc/*.yaml` ne sont pas des configurations autonomes.
 
-Pour le chauffage, lire `HEATING_CONTROLLER.md` et les commentaires des fichiers concernés. `CODEX_HANDOFF_HEATING_CONTROLLER.md` contient le contexte initial, dont certaines incertitudes ont été résolues depuis : privilégier l'état actuel et les validations documentées. Lire `GIT_WORKFLOW.md` pour le versionnement et les contrôles avant commit.
+Pour le chauffage, lire `HEATING_CONTROLLER.md` et les commentaires des fichiers concernés : privilégier l'état actuel et les validations documentées. Lire `GIT_WORKFLOW.md` pour le versionnement et les contrôles avant commit.
 
 ## Modifier une configuration
 
