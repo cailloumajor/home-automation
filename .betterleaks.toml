@@ -1,0 +1,14 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "esphome-inline-thread-dataset"
+description = "ESPHome Thread datasets must use !secret"
+regex = '''(?im)^\s*tlv:\s*["']?([0-9a-f]{32,})'''
+secretGroup = 1
+
+[[rules]]
+id = "esphome-inline-api-key"
+description = "ESPHome encryption keys must use !secret or a substitution"
+regex = '''(?m)^\s*key:\s*["']?([A-Za-z0-9+/]{43}=)'''
+secretGroup = 1

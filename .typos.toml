@@ -1,0 +1,23 @@
+[files]
+# Generated vector paths, CAD data and embedded symbols are not prose.
+extend-exclude = ["*.svg", "*.kicad_sch", "*.kicad_sym", "*.FCStd"]
+
+[type.french]
+# typos has an English dictionary; keep French documentation unchanged.
+extend-glob = ["HEATING_CONTROLLER.md", "GIT_WORKFLOW.md", "heating_controller_*.md"]
+check-file = false
+
+[default.extend-identifiers]
+SER = "SER"
+
+[default.extend-words]
+chambre = "chambre"
+confort = "confort"
+candidat = "candidat"
+commandes = "commandes"
+contient = "contient"
+limite = "limite"
+mesure = "mesure"
+registres = "registres"
+sur = "sur"
+valide = "valide"

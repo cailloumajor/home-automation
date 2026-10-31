@@ -2,3 +2,9 @@
 secrets.yaml
 *.FCBak
 .venv/
+__pycache__/
+*.py[cod]
+*.kicad_prl
+*-backups/
+~*.lck
+*.log
