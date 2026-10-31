@@ -1,0 +1,8 @@
+# Project development tools; hk resolves through the active mise environment.
+[mcp_servers.mise]
+command = "mise"
+args = ["mcp"]
+
+[mcp_servers.hk]
+command = "mise"
+args = ["exec", "--", "hk", "mcp", "--root", "."]

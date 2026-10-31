@@ -4,7 +4,7 @@ extend-exclude = ["*.svg", "*.kicad_sch", "*.kicad_sym", "*.FCStd"]
 
 [type.french]
 # typos has an English dictionary; keep French documentation unchanged.
-extend-glob = ["HEATING_CONTROLLER.md", "GIT_WORKFLOW.md", "heating_controller_*.md"]
+extend-glob = ["HEATING_CONTROLLER.md", "GIT_WORKFLOW.md", "heating_controller_*.md", "SKILL.md"]
 check-file = false
 
 [default.extend-identifiers]

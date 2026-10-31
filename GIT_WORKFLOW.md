@@ -38,6 +38,43 @@ préférences KiCad `*.kicad_prl`, les verrous et sauvegardes KiCad. Les
 réglages d'éditeur déjà suivis dans le dépôt restent soumis aux conventions
 existantes ; ne pas les supprimer automatiquement.
 
+## Skills et serveurs MCP du projet
+
+Le skill local `.agents/skills/esphome/SKILL.md` est suivi dans Git.
+Les skills `hk-configure`, `hk-debug` et `usage` sont fournis par les
+outils installés avec mise ; leurs liens absolus et le manifeste
+`.agents/skills/.mise-skills.json` sont locaux et ignorés par Git.
+`usage` est déclaré dans `mise.toml` pour que sa présence ne dépende pas
+d'une configuration globale personnelle. Les versions sont verrouillées
+dans `mise.lock`.
+La demande `usage = "latest"` suit la convention du dépôt ; le lockfile
+conserve la version résolue (7.1.4 à l'ajout), utilisée par `mise install --locked`.
+
+Après clonage et examen du dépôt, depuis sa racine :
+
+```sh
+mise trust
+mise install --locked
+mise skills sync --dir .agents/skills
+mise skills ls
+```
+
+La synchronisation régénère les liens pour les versions actives ; elle
+ne remplace pas le répertoire du skill ESPHome local. Ne pas copier les
+chemins absolus du manifeste dans la configuration partagée.
+
+La configuration `.codex/config.toml` est suivie : elle déclare les MCP
+stdio `mise` (`mise mcp`) et `hk` (`mise exec -- hk mcp --root .`) avec des
+commandes portables, sans identifiant ni secret. La déclaration des serveurs
+dans le fichier de projet suit la [référence officielle Codex](https://learn.chatgpt.com/docs/config-file/config-reference).
+Les réglages personnels de confiance et d'authentification restent locaux.
+
+La ressource d'environnement du MCP mise peut contenir des valeurs réelles :
+ne pas en enregistrer les réponses dans Git ou les journaux partagés.
+Les déclarations MCP et les skills sont des outils d'assistance ; ils ne
+remplacent pas les hooks, les validations ESPHome et les autorisations
+nécessaires pour agir sur un appareil.
+
 ## Secrets
 
 Les YAML utilisent `!secret`. Le dataset d'esplinky a été déplacé dans

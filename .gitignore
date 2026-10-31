@@ -8,3 +8,9 @@ __pycache__/
 *-backups/
 ~*.lck
 *.log
+
+# mise generates these machine-local skill links and their manifest.
+/.agents/skills/.mise-skills.json
+/.agents/skills/hk-configure
+/.agents/skills/hk-debug
+/.agents/skills/usage
