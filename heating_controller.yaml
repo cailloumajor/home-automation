@@ -55,6 +55,8 @@ network:
 
 openthread:
   device_type: FTD
+  # Replace the NVS dataset when migrating the Thread network.
+  force_dataset: true
   tlv: !secret thread_dataset_tlv
 
 api:

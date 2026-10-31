@@ -21,6 +21,8 @@ network:
   enable_ipv6: true
 
 openthread:
+  # Replace the NVS dataset when migrating the Thread network.
+  force_dataset: true
   tlv: !secret thread_dataset_tlv_esplinky
 uart:
   baud_rate: 9600

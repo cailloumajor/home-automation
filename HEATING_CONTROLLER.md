@@ -85,6 +85,61 @@ la racine du dépôt. Il lit `secrets.yaml` sans afficher la clé, change les
 modes simulés et redémarre la carte ; l'utiliser sur ce prototype sans
 sorties matérielles uniquement.
 
+## Migration Thread — 31 octobre 2026
+
+Le dataset publié anciennement dans l'historique Git a été remplacé par
+un nouveau réseau créé depuis Home Assistant : `ha-thread-98ba` remplace
+`ha-thread-780b`. La clé réseau, le PSKc et l'Extended PAN ID ont changé.
+Les valeurs privées restent uniquement dans `secrets.yaml`, ignoré par Git.
+L'ancien réseau a été supprimé de Home Assistant par l'utilisateur.
+
+Esplinky et le contrôleur ont reçu leur nouveau dataset par USB après
+validation et compilation avec ESPHome 2026.10.1. `force_dataset: true`
+remplace le dataset conservé en NVS par celui du YAML à chaque démarrage ;
+le banc LED hérite de cette option, a été validé et compilé, sans flash.
+L'API chiffrée des deux cartes a été vérifiée. Les six zones du contrôleur
+étaient à Arrêt après son redémarrage, sans modification de leur logique.
+Le diagnostic des mesures Linky manquantes est séparé dans
+`CODEX_HANDOFF_ESPLINKY.md` ; la connexion Thread d'esplinky fonctionne.
+
+Après la création du réseau, l'annonce mDNS du Border Router était absente.
+Un redémarrage de l'application OpenThread Border Router l'a rétablie,
+sans nouveau changement de clés. Les identifiants du réseau préféré ont
+été synchronisés dans l'application Android avant les réassociations.
+
+| Appareil | Ancien nœud Matter | Nouveau nœud Matter |
+| --- | --- | --- |
+| GRILLPLATS | 14 | 16 |
+| KAJPLATS | 3 | 17 |
+| MYGGSPRAY | 4 | 18 |
+| TIMMERFLOTTE | 2 | 19 |
+| BILRESA | 15 | 20 |
+
+Les identifiants des entités principales ont été repris sur les nouvelles
+entités : interrupteur GRILLPLATS, lampe KAJPLATS, occupation et éclairement
+MYGGSPRAY, température et humidité TIMMERFLOTTE, événements des deux boutons
+BILRESA. Les trois automatisations inspectées conservent leurs références :
+« Arrêter le répéteur WiFi », « Démarrer le répéteur WiFi » et « Contrôle lampe ».
+Le répéteur n'a pas été actionné par les contrôles. L'utilisateur a confirmé
+les événements BILRESA, les mesures TIMMERFLOTTE et le fonctionnement du palier
+après réactivation de « Contrôle lampe », précédemment désactivée.
+
+Sauvegardes Home Assistant : `16c32a2c` avant migration, puis `9bf735e7`
+avant nettoyage. Les anciens nœuds Matter ont été retirés après vérification
+de leur indisponibilité, de la disponibilité des cinq remplaçants et de
+l'absence de références aux anciennes entités dans les configurations inspectées.
+Home Assistant a été arrêté pour ce retrait, puis relancé : sa version
+2026.10.4 supprimerait sinon la fiche partagée avec le nouveau nœud lors
+du retrait de l'ancien MYGGSPRAY ou BILRESA. Le retrait des nœuds ne doit
+pas être confondu avec le nettoyage des anciennes entités du registre.
+Après relance, les cinq nouveaux nœuds sont disponibles et les fiches partagées
+préservées. Les 88 anciennes entités restent enregistrées : leur suppression
+par l'API administrative ou l'interface Home Assistant reste à effectuer.
+
+Le renouvellement des clés ne retire pas le dataset de l'historique Git.
+L'assainissement de cet historique et des copies publiées reste à traiter
+séparément ; aucune réécriture ni publication forcée n'a été effectuée.
+
 ## Installation relevée pour préparer la V0.3
 
 Informations fournies par l'utilisateur : les fils pilotes arrivent

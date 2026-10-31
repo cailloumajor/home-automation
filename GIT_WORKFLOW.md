@@ -93,6 +93,11 @@ partagé ; celui-ci peut impliquer les appareils du réseau Thread et doit
 être planifié séparément. Aucun renouvellement, changement du réseau,
 réécriture de l'historique ou force-push n'est effectué par ce versionnement.
 
+Le réseau a ensuite été renouvelé dans une opération distincte autorisée
+par l'utilisateur. Voir la section « Migration Thread » de `HEATING_CONTROLLER.md`
+pour les sauvegardes, les validations et le nettoyage restant. Ce renouvellement
+ne réécrit pas l'historique Git.
+
 ## Contrôles avant commit
 
 Respecter les hooks hk installés ; ne pas utiliser `--no-verify` ni `HK=0`.
