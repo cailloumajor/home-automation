@@ -1,0 +1,105 @@
+# USB / 3.3 V / indicator LEDs ONLY. Never connect to a mains output module.
+# GPIO10 directly controls active-low OE here: NOT the ARM interface of study C.
+substitutions:
+  devicename: heating-controller-bench
+
+packages:
+  controller: !include heating_controller.yaml
+
+esphome:
+  friendly_name: Banc LED chauffage
+  includes:
+    - inc/heating_bench.h
+  on_boot:
+    priority: -100
+    then:
+      - script.execute: bench_refresh
+  on_shutdown:
+    priority: 700
+    then:
+      - output.turn_off: bench_enable
+
+output:
+  - platform: gpio
+    id: bench_data
+    pin: GPIO0
+  - platform: gpio
+    id: bench_clock
+    pin: GPIO1
+  - platform: gpio
+    id: bench_latch
+    pin: GPIO22
+  - platform: gpio
+    id: bench_enable
+    pin:
+      number: GPIO10
+      inverted: true
+
+globals:
+  - id: bench_last_word
+    type: uint16_t
+    restore_value: false
+    initial_value: '0'
+  - id: bench_word_valid
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+
+script:
+  - id: bench_refresh
+    mode: single
+    then:
+      - lambda: |-
+          const uint32_t now = millis();
+          const std::array<fil_pilote_simulation::Signal, 6> zones = {{
+            fil_pilote_simulation::signal(id(living_mode), uint32_t(now - id(living_cycle_start))),
+            fil_pilote_simulation::signal(id(bathroom_mode), uint32_t(now - id(bathroom_cycle_start))),
+            fil_pilote_simulation::signal(id(bedroom_1_mode), uint32_t(now - id(bedroom_1_cycle_start))),
+            fil_pilote_simulation::signal(id(bedroom_2_mode), uint32_t(now - id(bedroom_2_cycle_start))),
+            fil_pilote_simulation::signal(id(bedroom_3_mode), uint32_t(now - id(bedroom_3_cycle_start))),
+            fil_pilote_simulation::signal(id(corridor_mode), uint32_t(now - id(corridor_cycle_start))),
+          }};
+          const uint16_t value = heating_bench::word(zones);
+          if (id(bench_word_valid) && value == id(bench_last_word)) return;
+          heating_bench::write(value,
+            [](bool bit) { id(bench_data).set_state(bit); delayMicroseconds(1); },
+            [](bool bit) { id(bench_clock).set_state(bit); delayMicroseconds(1); },
+            [](bool bit) { id(bench_latch).set_state(bit); delayMicroseconds(1); });
+          id(bench_last_word) = value;
+          id(bench_word_valid) = true;
+
+interval:
+  - interval: 50ms
+    then:
+      - script.execute: bench_refresh
+
+switch:
+  - platform: template
+    id: bench_run
+    name: Activer le banc LED
+    entity_category: config
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+    turn_on_action:
+      - script.execute: bench_refresh
+      - output.turn_on: bench_enable
+    turn_off_action:
+      - output.turn_off: bench_enable
+
+text_sensor:
+  - platform: template
+    name: Mot envoyé aux registres
+    entity_category: diagnostic
+    update_interval: 1s
+    lambda: |-
+      if (!id(bench_word_valid)) return {};
+      char value[7];
+      snprintf(value, sizeof(value), "0x%04X", unsigned(id(bench_last_word)));
+      return std::string(value);
+
+ota:
+  - platform: esphome
+    encryption:
+    on_begin:
+      then:
+        - switch.turn_off: bench_run
