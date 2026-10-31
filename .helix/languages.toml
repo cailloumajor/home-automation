@@ -1,3 +1,13 @@
+[[language]]
+name = "markdown"
+auto-format = true
+language-servers = ["marksman", "rumdl", "mpls"]
+formatter = { command = "rumdl", args = ["check", "--fix", "--stdin"] }
+
+[language-server.mpls]
+command = "mpls"
+args = ["--enable-emoji", "--full-sync"]
+
 [language-server.yaml-language-server.config.yaml]
 customTags = [
   "!secret scalar",

@@ -9,6 +9,9 @@ pkl = "latest"
 python = "3.14"
 tombi = "latest"
 typos = "latest"
+"github:mhersson/mpls" = "latest"
+marksman = "latest"
+rumdl = "latest"
 
 [tools."pypi:esphome"]
 version = "2026.10"
