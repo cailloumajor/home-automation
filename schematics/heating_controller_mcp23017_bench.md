@@ -247,8 +247,9 @@ Ces résultats renforcent l'hypothèse d'un transitoire sur RESET_N, sans en
 identifier l'origine ni mesurer sa forme. Le filtre passe les essais de
 contact de pointe, de S1, de redémarrage commandé et de reset watchdog.
 Après ce second test watchdog, le firmware normal avec diagnostic détaillé
-est revalidé, recompilé et réinstallé par USB avec succès. La confirmation
-des états Home Assistant après cette dernière restauration reste attendue.
+est revalidé, recompilé et réinstallé par USB avec succès. L'utilisateur
+confirme après cette dernière restauration : toutes les LED éteintes,
+banc désactivé, six modes sur Arrêt et défaut inactif.
 
 ## Essai du watchdog interne — procédure et firmware temporaire
 
