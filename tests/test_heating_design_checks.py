@@ -67,6 +67,16 @@ class DesignChecks(unittest.TestCase):
         self.assertGreater(low, 0.005)
         self.assertLess(high, 0.010)
 
+    def test_one_kilohm_wdi_pull_down_with_input_current_budget(self):
+        voltage, current = design.watchdog_wdi_budget()
+        self.assertAlmostEqual(voltage, 0.1919)
+        self.assertLess(voltage, 0.3 * 3.0)
+        self.assertLess(current, 0.004)
+
+    def test_ten_kilohms_does_not_meet_same_wdi_low_budget(self):
+        voltage, _ = design.watchdog_wdi_budget(resistance=10000)
+        self.assertGreater(voltage, 0.3 * 3.0)
+
 
 if __name__ == "__main__":
     unittest.main()

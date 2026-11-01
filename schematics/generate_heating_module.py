@@ -7,6 +7,7 @@ from pathlib import Path
 import json
 import re
 import uuid
+from kicad_drawing import write_library_table
 
 HERE = Path(__file__).resolve().parent
 ROOT = str(uuid.uuid5(uuid.NAMESPACE_URL, "heating-controller-v03-module"))
@@ -166,7 +167,4 @@ out = (f'(kicad_sch (version 20250114) (generator "eeschema") '
 (HERE / "Heating.kicad_sym").write_text(
     '(kicad_symbol_lib (version 20241209) (generator "kicad_symbol_editor")\n'
     + "\n".join(s.replace('(symbol "Heating:', '(symbol "', 1) for s in libs) + ')\n')
-(HERE / "sym-lib-table").write_text(
-    '(sym_lib_table (version 7)\n'
-    '  (lib (name "Heating") (type "KiCad") (uri "${KIPRJMOD}/Heating.kicad_sym") (options "") (descr "Provisional heating module symbols"))\n'
-    '  (lib (name "HeatingBench") (type "KiCad") (uri "${KIPRJMOD}/HeatingBench.kicad_sym") (options "") (descr "USB LED bench symbols")))\n')
+write_library_table(HERE)

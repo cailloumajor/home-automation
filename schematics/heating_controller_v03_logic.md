@@ -164,7 +164,7 @@ l'inverse, pour exclure des courants parasites dans les commandes.
     l'hystérésis et les délais ; ne pas transférer une conclusion du modèle
     numérique au circuit analogique sans ces mesures.
 
-Un modèle idéal et huit tests reproductibles accompagnent cette définition :
+Un modèle idéal et des tests reproductibles accompagnent cette définition :
 
 ```sh
 python -B tests/test_heating_design_checks.py

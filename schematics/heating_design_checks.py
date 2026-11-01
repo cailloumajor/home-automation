@@ -30,6 +30,17 @@ def led_current_bounds(v_min=4.75, v_max=5.25, vf_max=1.5,
             v_max/(resistance*(1-tolerance)))
 
 
+def watchdog_wdi_budget(resistance=1000, tolerance=0.01,
+                        input_current=190e-6, supply_max=3.6):
+    """Resistive budget using an assumed bound on absolute WDI input current.
+
+    Does not qualify the GPIO voltage under load or the supervisor at 3.3 V.
+    """
+    low_voltage = input_current * resistance * (1+tolerance)
+    high_current = supply_max / (resistance * (1-tolerance)) + input_current
+    return low_voltage, high_current
+
+
 @dataclass
 class InhibitModel:
     """Ideal 1G74 D=1 / PRE=1 / CLK=ARM / CLR=HEALTH_N + NAND3.

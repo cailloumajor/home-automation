@@ -21,6 +21,19 @@ def rectangle(x1, y1, x2, y2):
     return f"(rectangle (start {x1} {y1}) (end {x2} {y2}) (stroke (width 0) (type default)) (fill (type none)))"
 
 
+def write_library_table(directory):
+    libraries = (
+        ("Heating", "Provisional heating module symbols"),
+        ("HeatingBench", "USB LED bench symbols"),
+        ("HeatingInhibit", "Low-voltage latched inhibition symbols"),
+    )
+    entries = [f'  (lib (name "{name}") (type "KiCad") '
+        f'(uri "${{KIPRJMOD}}/{name}.kicad_sym") (options "") (descr "{description}"))'
+        for name, description in libraries]
+    (Path(directory) / "sym-lib-table").write_text(
+        '(sym_lib_table (version 7)\n' + '\n'.join(entries) + ')\n')
+
+
 class Drawing:
     def __init__(self, stem, library):
         self.stem, self.library = stem, library

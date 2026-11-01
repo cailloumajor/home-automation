@@ -284,9 +284,13 @@ le watchdog externe ; GPIO10 y contrôle directement OE_N, contrairement
 à son rôle ARM dans l'étude C. Il ne se raccorde à aucun module secteur.
 
 La [prochaine étape TBT](schematics/heating_controller_inhibit_bench.md)
-prépare l'inhibition mémorisée : candidats HC74/HC10 traversants et TPS3828-33
-sur adaptateur, avant schéma détaillé et firmware distinct. Le stock, le montage
-du composant CMS, les seuils, les rappels et les fronts restent à confirmer.
+prépare l'inhibition mémorisée : schéma F avec HC74/HC10/HC14 traversants et
+TPS3828-33 sur adaptateur, soudure acceptée par l'utilisateur. ERC sans violation,
+dix nets contrôlés, dix tests du modèle et des budgets résistifs réussis.
+Les broches proposées passent le schéma ESPHome 2026.10.1 ; le firmware ARM/WDI
+reste à écrire et à compiler. Les composants sont à acquérir et les niveaux,
+fronts et délais à mesurer. Le seuil du TPS3828-33 ne garantit pas l'inhibition
+avant la limite basse de 3,0 V du H2 : la supervision d'alimentation reste ouverte.
 Le banc LED installé reste désactivé ; aucune modification matérielle n'est
 effectuée pour cette nouvelle étude.
 

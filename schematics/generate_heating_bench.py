@@ -1,6 +1,6 @@
 """Generate the USB/3.3 V bench with eight LEDs moved between two registers."""
 from pathlib import Path
-from kicad_drawing import Drawing, line, rectangle
+from kicad_drawing import Drawing, line, rectangle, write_library_table
 
 HERE = Path(__file__).resolve().parent
 d = Drawing("heating_controller_logic_bench", "HeatingBench")
@@ -97,7 +97,4 @@ d.text("JH1 : 1=3V3, 2=GND, 3=GPIO0, 4=GPIO1, 5=GPIO22, 6=GPIO10",20.32,254,1.5)
 d.text("S1 en appui au premier demarrage. Inhibition logicielle au boot ; activation manuelle dans Home Assistant.",20.32,261.62,1.3)
 d.text("Huit LED : 4 rouges (+) et 4 vertes (-), chacune avec sa resistance. Observation des 16 sorties en deux passes.",20.32,269.24,1.3)
 d.save(HERE,"Heating controller - banc 4 paires LED / TBT uniquement", date="2026-11-01", revision="E-banc-TBT")
-(HERE / "sym-lib-table").write_text('''(sym_lib_table (version 7)
-    (lib (name "Heating") (type "KiCad") (uri "${KIPRJMOD}/Heating.kicad_sym") (options "") (descr "Provisional heating module symbols"))
-    (lib (name "HeatingBench") (type "KiCad") (uri "${KIPRJMOD}/HeatingBench.kicad_sym") (options "") (descr "USB LED bench symbols")))
-''')
+write_library_table(HERE)
