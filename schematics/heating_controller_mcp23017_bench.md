@@ -147,8 +147,12 @@ séparé avant toute conclusion sur ce repli.
   3 secondes est observée vers 5 minutes après le changement de mode,
   sans nouvelle commande. Les trois autres rouges restent allumées.
 
-Restent à vérifier sur cette variante : répétition de Confort −2 après
-300 secondes, défaut I²C provoqué et reset watchdog. Les validations du banc
+- Sur B, Sèche-serviettes en Confort −2 : l'utilisateur confirme deux
+  impulsions d'environ 7 secondes espacées de 5 minutes. Cette observation
+  complète le test de répétition, sans mesure instrumentée de précision.
+
+Restent à vérifier sur cette variante : défaut I²C provoqué et reset watchdog.
+Les validations du banc
 595 ne sont pas transférées automatiquement à ce montage.
 
 Références : [fiche technique Microchip, brochage et registres](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-MCP23S17-16-Bit-IO-Expander-with-Serial-Interface-DS20001952.pdf),
