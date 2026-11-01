@@ -12,8 +12,9 @@ simulation validé sur carte : Thread/API, six zones, commandes simulées,
 redémarrage, interruption Home Assistant et interruption du Border Router.
 Il ne qualifie aucun étage électrique.
 
-Le firmware du banc LED est validé et compilé, mais non flashé ni testé
-physiquement. Les schémas V0.3 sont des études. Aucun tag de validation
+Le firmware du banc LED est validé, compilé et installé par USB ; son API
+répond avec le banc désactivé. Les essais physiques des LED restent à réaliser.
+Les schémas V0.3 secteur sont des études. Aucun tag de validation
 matérielle ne sera créé avant les essais correspondants.
 
 Les commits distinguent : protection des secrets, firmware V0.2, firmware

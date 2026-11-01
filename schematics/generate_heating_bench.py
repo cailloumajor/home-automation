@@ -21,7 +21,7 @@ d.define("Conn6", "J", [(i+1,"",7.62,-i*2.54,180) for i in range(6)], rectangle(
 d.define("Conn8", "J", [(i+1,"",7.62,-i*10.16,180) for i in range(8)], rectangle(-2.54,2.54,5.08,-73.66))
 outputs = [(15, "QA"), (1,"QB"), (2,"QC"), (3,"QD"), (4,"QE"), (5,"QF"), (6,"QG"), (7,"QH")]
 inputs = [(14,"SER"), (11,"SRCLK"), (12,"RCLK"), (10,"SRCLR_N"), (13,"OE_N"), (16,"VCC"), (8,"GND"), (9,"QH_PRIME")]
-d.define("AHC595", "U", [(pin,name,-22.86,30.48-i*10.16,0) for i,(pin,name) in enumerate(inputs)] +
+d.define("HC595", "U", [(pin,name,-22.86,30.48-i*10.16,0) for i,(pin,name) in enumerate(inputs)] +
             [(pin,name,22.86,30.48-i*10.16,180) for i,(pin,name) in enumerate(outputs)],
             rectangle(-20.32,35.56,20.32,-45.72))
 
@@ -30,7 +30,7 @@ d.text("GPIO10 = inhibition OE_N directe. Ce banc ne valide pas le watchdog ni l
 d.text("Alimenter les registres depuis 3V3 de la DevKit. Ne pas utiliser 5 V sur ces registres ou les GPIO.",20.32,30.48)
 
 for chip,y in ((1,85.09),(2,187.96)):
-    d.symbol("AHC595",f"U{chip}","SN74AHC595N / 3V3",76.2,y,title_offset=43.18)
+    d.symbol("HC595",f"U{chip}","SN74HC595N / 3V3",76.2,y,title_offset=43.18)
     d.symbol("Conn8",f"JOUT{chip}",f"U{chip} : QA a QH",139.7,y-30.48)
     nets = ["DATA" if chip == 1 else "CASCADE", "CLOCK", "LATCH",
             "+3V3", "OE_N", "+3V3", "GND_TBT", "CASCADE"]

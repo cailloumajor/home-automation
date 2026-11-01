@@ -261,7 +261,11 @@ Les deux registres restent en cascade. Le firmware du banc ne change pas :
 son mot de seize bits commande toujours les huit voies, observées en deux passes.
 Configuration validée, firmware précédemment compilé ; tests C++ et contrôle
 des quarante nets utiles réussis ; ERC sans erreur ni avertissement.
-Le firmware V0.2 reste inchangé, aucun flash du banc n'a été effectué.
+Le banc a été installé par USB le 1er novembre 2026 avec les SN74HC595N
+confirmés par l'utilisateur. L'API chiffrée répond : six zones à Arrêt,
+activation du banc désactivée, mot `0x5555`. Les quatre paires sont raccordées
+à U1 ; les essais physiques restent à réaliser. La V0.2 reste disponible
+pour un retour au firmware sans sorties matérielles.
 Ce premier banc USB ne comprend pas
 le watchdog externe ; GPIO10 y contrôle directement OE_N, contrairement
 à son rôle ARM dans l'étude C. Il ne se raccorde à aucun module secteur.

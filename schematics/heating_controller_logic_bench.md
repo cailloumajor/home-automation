@@ -5,8 +5,9 @@ et quatre paires de LED réutilisées en deux passes. Aucun fil pilote,
 radiateur, photorelais, module secteur ou alimentation secteur ouverte
 ne doit y être raccordé.
 
-Le firmware V0.2 installé reste inchangé. Le firmware de banc est préparé,
-validé et compilé, mais **pas flashé ni testé physiquement**.
+Le firmware de banc a été validé, compilé et installé par USB le 1er novembre
+2026. Son API chiffrée répond ; les essais physiques des LED restent à réaliser.
+La V0.2 de simulation reste disponible dans `heating_controller.yaml`.
 
 ## Documents et composants
 
@@ -20,7 +21,7 @@ validé et compilé, mais **pas flashé ni testé physiquement**.
 | Quantité | Composant proposé | Repères |
 | --- | --- | --- |
 | 1 | ESP32-H2-DevKitM-1 existante, alimentation USB uniquement | Carte de commande |
-| 2 | TI SN74AHC595N, boîtier traversant PDIP-16, sous 3,3 V | U1, U2 |
+| 2 | TI SN74HC595N confirmés, boîtier traversant PDIP-16, sous 3,3 V | U1, U2 |
 | 4 + 4 | LED d'indication rouges et vertes adaptées à une faible intensité | D1 à D8 |
 | 8 | Résistance 2,2 kΩ, 1 %, 0,125 W ou plus | R1 à R8 |
 | 1 | Résistance 1 kΩ, 1 %, 0,125 W ou plus | R17 |
@@ -45,8 +46,8 @@ des céramiques non polarisées. Le schéma indique la polarité de C3.
   6 jaunes 5 mm et 3 jaunes 3 mm.
 - Toutes les résistances nécessaires, deux céramiques 100 nF, électrolytiques
   10 µF 35/50 V, interrupteur, breadboard et fils disponibles.
-- Deux registres 595 sont nécessaires ; l'utilisateur attend un lot de dix.
-  Réception et référence réelle à confirmer avant montage.
+- Référence des registres reçus confirmée par l'utilisateur : SN74HC595N.
+  Deux sont utilisés ; le lot commandé en comporte dix.
 - SN74LVC244AN disponibles, mais inutilisables en remplacement des registres.
 
 Les [SN74LVC244A](https://www.ti.com/lit/ds/symlink/sn74lvc244a.pdf) sont
@@ -63,11 +64,15 @@ Conserver 2,2 kΩ pour commencer ; la luminosité peut varier avec la couleur.
 Les références exactes des LED ne sont pas connues et les courants n'ont
 pas été mesurés.
 
-Le montage série prévu nécessite deux registres compatibles,
-de préférence les SN74AHC595N indiqués ci-dessous. Aucun remplacement
-du 595 par le 244 n'est validé.
+Le schéma initial proposait des SN74AHC595N ; le banc est adapté aux
+SN74HC595N effectivement reçus, de même brochage et fonction logique.
+La [fiche TI SN74HC595](https://www.ti.com/lit/ds/symlink/sn74hc595.pdf)
+indique une alimentation de 2 à 6 V. Ici, registres et GPIO partagent le
+3,3 V de la DevKit ; les LED restent à faible courant via 2,2 kΩ.
+Le transfert GPIO avec des pauses de 1 µs conserve une horloge lente.
+Cette substitution concerne le banc LED uniquement ; l'étude matérielle C
+conserve ses propres choix de composants. Aucun changement de firmware requis.
 
-Référence des registres : [TI SN74AHC595](https://www.ti.com/lit/ds/symlink/sn74ahc595.pdf).
 Ne pas substituer un 74HCT595 alimenté en 5 V sur la base du seul numéro
 595. Les niveaux logiques et l'alimentation de ce schéma sont 3,3 V.
 
@@ -228,7 +233,7 @@ Les deux passes ne permettent pas d'observer les seize sorties simultanément.
 
 ## Vérifications déjà effectuées
 
-- Firmware inchangé, précédemment compilé : ESPHome 2026.10.1, ESP-IDF 5.5.6, réussite.
+- Configuration et compilation : ESPHome 2026.10.1, ESP-IDF 5.5.6, réussite.
 - RAM : 38,7 % ; partition applicative : 42,1 %.
 - Tests C++ : mapping des huit paires, mots extrêmes, ordre des seize bits
   et impulsion unique de verrouillage, réussite.
@@ -236,7 +241,13 @@ Les deux passes ne permettent pas d'observer les seize sorties simultanément.
 - ERC KiCad : zéro erreur et zéro avertissement. Contrôle des quarante nets
   utiles : alimentation, cascade, groupes de sorties séparés, huit résistances/LED
   et inhibition, réussite.
-- SVG exporté et inspecté visuellement. Aucun flash ni essai physique du banc.
+- SVG exporté et inspecté visuellement ; ERC et netlist vérifiés avec les SN74HC595N.
+- Installation USB du banc réussie le 1er novembre 2026, intégrité vérifiée.
+  API chiffrée confirmée sur `heating-controller-bench`, MAC `48:31:B7:C1:83:0A`.
+  Six zones à Arrêt, activation du banc désactivée, mot envoyé `0x5555`.
+  Ces états logiciels ne prouvent pas encore les niveaux électriques ou les LED.
+- Bloc de quatre paires monté et raccordé à U1 selon l'utilisateur.
+  Résultats physiques des essais encore à relever.
 
 Reproduire les contrôles locaux :
 
