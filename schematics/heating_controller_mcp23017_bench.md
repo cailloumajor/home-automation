@@ -158,11 +158,26 @@ séparé avant toute conclusion sur ce repli.
   actif. Une activation volontaire efface le défaut et rétablit les deux
   couleurs sur la première paire et les rouges seules sur les trois autres.
 
-Reste à vérifier sur cette variante : reset watchdog.
-Les validations du banc
-595 ne sont pas transférées automatiquement à ce montage.
+- Test de blocage volontaire : capture USB à 18:37:05,180 du message de
+  blocage de la boucle, puis déclenchement `task_wdt` à 18:37:09,529 avec
+  `loopTask (CPU 0)` non alimentée, abandon et `Rebooting...` à 18:37:10,052.
+  Ces horodatages de réception USB donnent environ 4,35 secondes jusqu'au
+  diagnostic watchdog ; ce n'est pas une mesure instrumentée du délai matériel.
+  La ligne ROM suivante indique `rst:0xc (SW_CPU)` : le log watchdog et
+  l'abandon précédents établissent ici la cause, pas ce code ROM seul.
+  L'utilisateur confirme l'extinction des LED, leur maintien éteint et la
+  reconnexion Home Assistant. Les états détaillés après reset et la valeur
+  du diagnostic de cause du reset n'ont pas été relevés séparément.
+- Après le test watchdog : firmware normal revalidé, recompilé et réinstallé
+  par USB avec succès, pour retirer le bouton d'injection de faute. Le retour
+  des états dans Home Assistant après cette restauration reste à confirmer.
 
-## Essai du watchdog interne — préparé, pas encore validé
+Les essais fonctionnels listés ci-dessus sont confirmés pour ce banc LED.
+La sensibilité au contact de la pointe sur RESET_N reste inexpliquée et sa
+marge électrique reste à quantifier. Les validations du banc 595 ne sont pas
+transférées automatiquement à ce montage.
+
+## Essai du watchdog interne — procédure et firmware temporaire
 
 Le point d'entrée temporaire `heating_controller_mcp23017_watchdog_test.yaml`
 inclut le banc normal et conserve son identité réseau et ses clés. Il ajoute
