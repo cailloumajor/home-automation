@@ -1,9 +1,10 @@
 # Contrôleur de chauffage — V0.2
 
 Une [variante du banc avec MCP23017](schematics/heating_controller_mcp23017_bench.md)
-est préparée séparément pour remplacer les deux 595. Elle n'est pas installée
-et ses essais matériels restent à faire ; les validations du banc 595 ne
-s'appliquent pas à cette variante.
+remplace les deux 595 sur le montage USB. Le flash, les états statiques sur
+les deux ports, S1 et la désactivation sont confirmés. Les autres essais et
+la sensibilité constatée lors de la mesure de RESET_N restent à traiter ;
+les validations du banc 595 ne s'appliquent pas à cette variante.
 
 Prototype de connectivité pour ESP32-H2-DevKitM-1 : ESP-IDF, OpenThread
 FTD, API native ESPHome chiffrée, OTA chiffrée, uptime et redémarrage.

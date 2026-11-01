@@ -1,8 +1,8 @@
-# Banc LED avec MCP23017 — préparation
+# Banc LED avec MCP23017 — essais en cours
 
 Variante sur `heating/v0.3-mcp23017-bench`, USB et 3,3 V uniquement.
-Le montage avec deux 595 reste la référence physiquement testée. Cette
-variante n'a pas été câblée ni flashée. L'étude d'inhibition externe reste
+Cette variante est câblée et flashée par USB ; les premiers essais physiques
+sont confirmés ci-dessous. L'étude d'inhibition externe reste
 une étude distincte, sans composants supplémentaires imposés à ce banc.
 
 Le plan ci-dessous concerne le **MCP23017 en boîtier DIP 28 broches**.
@@ -72,7 +72,7 @@ de verrouillage simultané des seize sorties comme avec les deux 595.
 
 S1 réinitialise le MCP : le relâcher ne reconfigure pas ses sorties. Le contrôle
 périodique doit constater la perte de configuration, puis le banc doit être
-réactivé explicitement. Ces comportements restent à vérifier sur breadboard.
+réactivé explicitement. Ces comportements sont confirmés sur breadboard.
 
 Le rappel de RESET_N à GND vise l'inhibition lorsque GPIO10 est relâché.
 Mesurer RESET_N avant les essais : bas au démarrage et banc désactivé,
@@ -104,6 +104,33 @@ prévoir un flash USB explicitement demandé. Vérifier ensuite : démarrage
 redémarrage, OTA et déconnexion I²C. Le banc doit rester désactivé après défaut.
 Le test de blocage du programme et du watchdog doit faire l'objet d'un essai
 séparé avant toute conclusion sur ce repli.
+
+## Résultats physiques confirmés par l'utilisateur
+
+- Flash USB réussi avec ESPHome 2026.10.1 ; démarrage et relâchement de S1
+  avec les huit LED éteintes, banc désactivé.
+- RESET_N mesuré à 0 V banc désactivé. Banc activé, mesure au Metrix MX2B
+  sur calibre continu 5 V : un peu moins de 3 V, sans valeur plus précise.
+  La marge au seuil haut n'est donc pas quantifiée.
+- Le contact de la pointe sur RESET_N déclenche une désactivation avec défaut,
+  y compris sur un point déporté. Pointes placées avant activation, le banc
+  s'active et reste actif pendant la mesure. La cause de cette sensibilité
+  reste à établir ; aucun diagnostic précis du transitoire n'a été enregistré.
+- S1 : extinction à l'appui, maintien éteint après relâchement avec défaut actif,
+  puis réactivation volontaire possible.
+- Port A : quatre rouges seules en Arrêt ; trois premières paires éteintes
+  en Confort, deux couleurs en Éco, vertes seules en Hors-gel pour Séjour
+  cuisine. Couloir réserve sur Confort éteint uniquement la quatrième rouge
+  lorsque les trois premières paires sont en Hors-gel. Retour des deux zones
+  sur Arrêt : quatre rouges seules. Désactivation : toutes éteintes.
+- Après déplacement des LED hors tension vers B et remise sous tension :
+  toutes éteintes. Activation avec six zones sur Arrêt : quatre rouges seules.
+  Sèche-serviettes Confort, Chambre 1 Éco, Chambre 2 Hors-gel, Chambre 3 Arrêt :
+  paires respectivement éteinte, deux couleurs, verte seule et rouge seule.
+
+Restent à vérifier sur cette variante : repli au redémarrage, OTA, enveloppes
+Confort −1/−2, défaut I²C provoqué et reset watchdog. Les validations du banc
+595 ne sont pas transférées automatiquement à ce montage.
 
 Références : [fiche technique Microchip, brochage et registres](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-MCP23S17-16-Bit-IO-Expander-with-Serial-Interface-DS20001952.pdf),
 [transport I²C ESPHome](https://esphome.io/components/i2c_device/).
