@@ -137,7 +137,13 @@ séparé avant toute conclusion sur ce repli.
   Durées observées par l'utilisateur, sans mesure instrumentée ni observation
   de la répétition après 300 secondes.
 
-Restent à vérifier sur cette variante : OTA, répétition des enveloppes après
+- OTA chiffrée du même firmware réussie : transfert 125,96 secondes, mise à
+  jour 126,54 secondes au total. Départ avec Sèche-serviettes en Éco sur B,
+  banc activé et S1 relâché. L'utilisateur confirme l'extinction au début du
+  transfert, le maintien éteint, la reconnexion Home Assistant, le banc
+  désactivé, les six modes sur Arrêt et le défaut inactif après redémarrage.
+
+Restent à vérifier sur cette variante : répétition des enveloppes après
 300 secondes, défaut I²C provoqué et reset watchdog. Les validations du banc
 595 ne sont pas transférées automatiquement à ce montage.
 
