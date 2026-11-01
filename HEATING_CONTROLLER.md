@@ -263,8 +263,11 @@ Configuration validée, firmware précédemment compilé ; tests C++ et contrôl
 des quarante nets utiles réussis ; ERC sans erreur ni avertissement.
 Le banc a été installé par USB le 1er novembre 2026 avec les SN74HC595N
 confirmés par l'utilisateur. L'API chiffrée répond : six zones à Arrêt,
-activation du banc désactivée, mot `0x5555`. Les quatre paires sont raccordées
-à U1 ; les essais physiques restent à réaliser. La V0.2 reste disponible
+activation du banc désactivée, mot `0x5555`. Les quatre paires sur U1 ont
+permis de confirmer les modes Arrêt, Confort, Éco et Hors-gel, l'indépendance
+Séjour cuisine/Couloir réserve, S1 et les impulsions approximatives de 3 et 7 s.
+Les essais U2 et les contrôles physiques de redémarrage/OTA restent à réaliser.
+La V0.2 reste disponible
 pour un retour au firmware sans sorties matérielles.
 Ce premier banc USB ne comprend pas
 le watchdog externe ; GPIO10 y contrôle directement OE_N, contrairement

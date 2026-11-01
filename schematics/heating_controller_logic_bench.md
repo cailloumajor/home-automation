@@ -6,7 +6,8 @@ radiateur, photorelais, module secteur ou alimentation secteur ouverte
 ne doit y être raccordé.
 
 Le firmware de banc a été validé, compilé et installé par USB le 1er novembre
-2026. Son API chiffrée répond ; les essais physiques des LED restent à réaliser.
+2026. Son API chiffrée répond ; les premiers essais physiques sur U1 sont
+confirmés ci-dessous, les essais U2 et les contrôles de redémarrage/OTA restent à réaliser.
 La V0.2 de simulation reste disponible dans `heating_controller.yaml`.
 
 ## Documents et composants
@@ -247,7 +248,28 @@ Les deux passes ne permettent pas d'observer les seize sorties simultanément.
   Six zones à Arrêt, activation du banc désactivée, mot envoyé `0x5555`.
   Ces états logiciels ne prouvent pas encore les niveaux électriques ou les LED.
 - Bloc de quatre paires monté et raccordé à U1 selon l'utilisateur.
-  Résultats physiques des essais encore à relever.
+
+### Résultats physiques sur U1 — 1er novembre 2026
+
+L'utilisateur confirme les observations suivantes sur le bloc raccordé à U1,
+avec les vertes à gauche et les rouges à droite :
+
+| Essai | Observation confirmée |
+| --- | --- |
+| Banc désactivé, S1 fermé puis ouvert | Toutes les LED éteintes |
+| Activation avec six modes Arrêt, `0x5555` | Quatre rouges allumées, quatre vertes éteintes |
+| Six modes Confort, `0x0000` | Huit LED éteintes |
+| Six modes Éco, `0xFFFF` | Huit LED allumées |
+| Six modes Hors-gel, `0xAAAA` | Quatre vertes allumées, quatre rouges éteintes |
+| Séjour cuisine en Confort, autres zones en Hors-gel, `0xAA80` | Seule la verte de P4 allumée |
+| Couloir réserve passé en Éco, `0xAAC0` | P4 rouge et verte allumées, P1 à P3 éteintes |
+| S1 fermé puis rouvert sur cet état | Extinction de toutes les LED, puis retour de P4 seule |
+| Couloir réserve en Confort, Séjour cuisine en Confort −1 °C puis −2 °C | P1 à P3 rouge et verte allumées environ 3 s puis 7 s, P4 éteinte |
+
+Les durées sont des observations approximatives confirmées par l'utilisateur,
+pas des mesures instrumentées. La répétition physique à 300 s n'a pas été
+observée. Les essais U2, le repli après redémarrage et l'inhibition au début
+d'une OTA restent à vérifier physiquement. Aucun étage secteur n'est testé.
 
 Reproduire les contrôles locaux :
 

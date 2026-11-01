@@ -13,7 +13,8 @@ redémarrage, interruption Home Assistant et interruption du Border Router.
 Il ne qualifie aucun étage électrique.
 
 Le firmware du banc LED est validé, compilé et installé par USB ; son API
-répond avec le banc désactivé. Les essais physiques des LED restent à réaliser.
+répond avec le banc désactivé. Les premiers essais physiques sur U1 sont
+confirmés ; les essais U2 et de redémarrage/OTA restent à réaliser.
 Les schémas V0.3 secteur sont des études. Aucun tag de validation
 matérielle ne sera créé avant les essais correspondants.
 
