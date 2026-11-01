@@ -178,6 +178,33 @@ La sensibilité au contact de la pointe sur RESET_N reste inexpliquée et sa
 marge électrique reste à quantifier. Les validations du banc 595 ne sont pas
 transférées automatiquement à ce montage.
 
+## Diagnostic de la sensibilité de RESET_N — en cours
+
+Le firmware normal expose **Détail du défaut MCP23017** et journalise le
+premier échec avant de maintenir RESET_N bas. Le diagnostic est conservé
+jusqu'à une activation réussie ou un redémarrage :
+
+- `NONE` : aucun défaut mémorisé.
+- `I2C READ/WRITE reg=...` : transaction échouée, sans valeur de registre
+  exploitable. Cela ne distingue pas à lui seul un reset d'une perturbation du bus.
+- `REGISTER reg=... expected=... actual=...` : lectures réussies, mais
+  configuration ou registres de sortie incohérents. Pour 0x00, le mot regroupe
+  IODIRA en octet bas et IODIRB en octet haut ; 0x14 regroupe OLATA et OLATB.
+  Une direction lue à 0xFFFF au lieu de 0x0000 est compatible avec un retour
+  aux valeurs de reset, sans prouver à elle seule la cause électrique.
+
+Les lectures I²C et leur ordre, les délais, les seuils matériels et le câblage
+ne sont pas modifiés pour cette instrumentation. Les tests hôtes vérifient
+le détail pour chaque transaction échouée, le contenu lu avant inhibition,
+la conservation du diagnostic et son effacement après activation réussie.
+
+Pour reproduire : banc activé avec un état statique, S1 relâché, garder le
+cordon noir au GND puis appliquer uniquement la pointe rouge au point RESET_N
+déporté, multimètre inchangé en continu 5 V. Relever le détail du défaut avant
+toute réactivation, ainsi que le maintien ou non de la connexion Home Assistant.
+Comparer ensuite avec le branchement des pointes avant activation déjà réussi.
+Ne pas ajouter de filtrage avant d'avoir relevé ces observations.
+
 ## Essai du watchdog interne — procédure et firmware temporaire
 
 Le point d'entrée temporaire `heating_controller_mcp23017_watchdog_test.yaml`

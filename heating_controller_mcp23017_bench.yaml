@@ -47,6 +47,11 @@ globals:
     initial_value: '0x5555'
 
 script:
+  - id: mcp_log_fault
+    then:
+      - lambda: |-
+          ESP_LOGW("mcp_bench", "%s; reset held active",
+                    heating_mcp23017_bench::controller().fault_detail().c_str());
   - id: mcp_update_word
     then:
       - lambda: |-
@@ -76,7 +81,7 @@ interval:
             },
             [](bool release) { id(mcp_reset_release).set_state(release); });
           if (!ok) {
-            ESP_LOGW("mcp_bench", "Transfer or register check failed; reset held active");
+            id(mcp_log_fault).execute();
             id(mcp_bench_run).publish_state(false);
           }
 
@@ -99,7 +104,7 @@ switch:
             },
             [](bool release) { id(mcp_reset_release).set_state(release); },
             [](uint32_t us) { delayMicroseconds(us); });
-          if (!ok) ESP_LOGW("mcp_bench", "Activation failed; reset held active");
+          if (!ok) id(mcp_log_fault).execute();
           id(mcp_bench_run).publish_state(ok);
     turn_off_action:
       - lambda: |-
@@ -115,6 +120,11 @@ binary_sensor:
     lambda: return heating_mcp23017_bench::controller().fault() != heating_mcp23017_bench::Fault::NONE;
 
 text_sensor:
+  - platform: template
+    name: Détail du défaut MCP23017
+    entity_category: diagnostic
+    update_interval: 1s
+    lambda: return heating_mcp23017_bench::controller().fault_detail();
   - platform: template
     name: Mot demandé au MCP23017
     entity_category: diagnostic

@@ -82,6 +82,9 @@ int main() {
     bus.fail_at = operation;
     assert(!arm(controller, bus, 0x5555));
     assert(!controller.armed() && !bus.released && controller.fault() == Fault::COMMUNICATION);
+    const std::string details[] = {"I2C WRITE reg=0x0A", "I2C WRITE reg=0x14", "I2C WRITE reg=0x00",
+        "I2C READ reg=0x0A", "I2C READ reg=0x00", "I2C READ reg=0x14"};
+    assert(controller.fault_detail() == details[operation - 1]);
     const int before = bus.operations;
     assert(!refresh(controller, bus, 0xFFFF));
     assert(bus.operations == before && !bus.released);
@@ -107,6 +110,9 @@ int main() {
     assert(!refresh(controller, bus, 0xAAAA));
     assert(!bus.released && !controller.armed());
     assert(controller.last_word() == 0x5555 && controller.fault() == Fault::COMMUNICATION);
+    const std::string details[] = {"I2C READ reg=0x0A", "I2C READ reg=0x00", "I2C READ reg=0x14",
+        "I2C WRITE reg=0x14", "I2C READ reg=0x0A", "I2C READ reg=0x00", "I2C READ reg=0x14"};
+    assert(controller.fault_detail() == details[operation - 1]);
   }
 
   // A brief external reset between polls is detected even if I2C works again.
@@ -118,9 +124,13 @@ int main() {
     bus.reset(true);
     assert(!refresh(controller, bus, 0xFFFF));
     assert(controller.fault() == Fault::CONFIGURATION && !bus.released);
+    assert(controller.fault_detail() == "REGISTER reg=0x00 expected=0x0000 actual=0xFFFF");
+    const std::string captured = controller.fault_detail();
     assert(!refresh(controller, bus, 0xFFFF));
+    assert(controller.fault_detail() == captured);  // Hardware reset must not erase the evidence.
     assert(arm(controller, bus, 0x5555));  // Explicit retry is the only recovery.
     assert(controller.fault() == Fault::NONE && controller.armed());
+    assert(controller.fault_detail() == "NONE");
   }
 
   // A changed latch or control register is not accepted as the requested state.
@@ -131,6 +141,10 @@ int main() {
     bus.registers[reg] ^= 1;
     assert(!refresh(controller, bus, 0x5555));
     assert(controller.fault() == Fault::CONFIGURATION && !bus.released);
+    const std::string expected = reg == 0x0A ? "REGISTER reg=0x0A expected=0x0000 actual=0x0001" :
+        reg == 0x14 ? "REGISTER reg=0x14 expected=0x5555 actual=0x5554" :
+                      "REGISTER reg=0x14 expected=0x5555 actual=0x5455";
+    assert(controller.fault_detail() == expected);
   }
 
   // Loss of the second byte must also reset an already partially updated port.
