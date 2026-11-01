@@ -30,6 +30,10 @@ Placer 100 nF au plus près de VDD/VSS et conserver le 10 µF sur le rail
 3,3 V, avec sa borne négative vers GND. Les condensateurs existants
 peuvent être réutilisés après déconnexion des 595.
 
+Ajouter également **100 nF céramique entre RESET_N (18) et GND (10)**,
+au plus près du MCP, pour le filtrage testé ci-dessous. Ce second condensateur
+ne remplace pas le découplage entre VDD et VSS.
+
 S1 est un poussoir normalement ouvert **entre RESET_N et GND**.
 Son ancien raccordement à 3,3 V pour OE_N ne convient pas ici.
 La résistance série de 1 kΩ limite le courant quand S1 est enfoncé et
@@ -174,8 +178,9 @@ séparé avant toute conclusion sur ce repli.
   inactif et toutes les LED éteintes.
 
 Les essais fonctionnels listés ci-dessus sont confirmés pour ce banc LED.
-La sensibilité au contact de la pointe sur RESET_N reste inexpliquée et sa
-marge électrique reste à quantifier. Les validations du banc 595 ne sont pas
+La sensibilité au contact de la pointe sur RESET_N n'est plus reproduite
+sur une dizaine d'essais avec le filtre 100 nF. L'origine du transitoire et la
+marge électrique statique restent à établir. Les validations du banc 595 ne sont pas
 transférées automatiquement à ce montage.
 
 ## Diagnostic de la sensibilité de RESET_N — en cours
@@ -204,6 +209,36 @@ déporté, multimètre inchangé en continu 5 V. Relever le détail du défaut a
 toute réactivation, ainsi que le maintien ou non de la connexion Home Assistant.
 Comparer ensuite avec le branchement des pointes avant activation déjà réussi.
 Ne pas ajouter de filtrage avant d'avoir relevé ces observations.
+
+Premiers résultats avec le diagnostic détaillé : au contact de la pointe
+sur RESET_N, `REGISTER reg=0x00 expected=0x0000 actual=0xFFFF` est relevé
+dans Home Assistant et dans les logs USB. Aucun redémarrage de l'ESP32
+n'est enregistré à cet instant. Après réactivation, la mesure sur le rail
+3,3 V donne 3,3 V et ne désactive pas le banc. Cela oriente vers une
+perturbation locale de RESET ; la forme et l'origine du transitoire ne sont
+pas établies par ces seules observations.
+
+Filtre installé hors tension : 100 nF céramique entre RESET_N et GND, au plus
+près des broches 18 et 10, en conservant le découplage de VDD.
+Avec 1 kΩ série et 10 kΩ vers GND, la constante de temps
+approximative lorsque GPIO10 commande le niveau est de 91 µs. Les pauses
+de 1 ms de la séquence d'activation sont conservées. En cas de GPIO relâché,
+la décharge par 10 kΩ possède une constante de temps de 1 ms : le filtrage
+ajoute donc aussi un délai à l'inhibition. Le condensateur ne relève pas la
+tension haute statique.
+
+Résultats confirmés avec le filtre :
+
+- Une dizaine de contacts de la pointe sur RESET_N, sans désactivation du banc.
+- S1 : extinction à l'appui, maintien éteint après relâchement, banc désactivé
+  et défaut actif.
+- Redémarrage demandé depuis Home Assistant après réactivation : toutes les
+  LED restent éteintes après reconnexion, banc désactivé, six modes sur Arrêt
+  et défaut inactif.
+
+Ces résultats renforcent l'hypothèse d'un transitoire sur RESET_N, sans en
+identifier l'origine ni mesurer sa forme. Le test watchdog ci-dessous a été
+réussi avant ajout du filtre ; sa répétition avec le filtre reste à faire.
 
 ## Essai du watchdog interne — procédure et firmware temporaire
 

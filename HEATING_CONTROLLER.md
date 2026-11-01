@@ -4,8 +4,11 @@ Une [variante du banc avec MCP23017](schematics/heating_controller_mcp23017_benc
 remplace les deux 595 sur le montage USB. Les états des deux ports, S1,
 le redémarrage, l'OTA, les impulsions et leur répétition, le défaut I²C avec
 réactivation volontaire et le repli après blocage watchdog sont confirmés.
-La sensibilité constatée lors de la mesure de RESET_N reste à expliquer et
-sa marge électrique à quantifier ; ces essais ne qualifient aucun étage secteur.
+La sensibilité constatée lors de la mesure de RESET_N n'est plus reproduite
+sur une dizaine de contacts après ajout d'un filtre 100 nF. S1 et le redémarrage
+sont revérifiés avec ce filtre ; le watchdog reste à revérifier. L'origine du
+transitoire et la marge électrique restent à établir ; ces essais ne qualifient
+aucun étage secteur.
 
 Prototype de connectivité pour ESP32-H2-DevKitM-1 : ESP-IDF, OpenThread
 FTD, API native ESPHome chiffrée, OTA chiffrée, uptime et redémarrage.
