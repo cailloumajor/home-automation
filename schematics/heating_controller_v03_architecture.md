@@ -1,7 +1,9 @@
 # Architecture du contrôleur de chauffage — V0.3, révision C
 
 Date : 31 octobre 2026. Statut : proposition d'architecture à examiner.
-Le prototype installé reste la V0.2 simulée. Ce document ne constitue
+Le prototype initial était la V0.2 simulée ; le banc LED E est désormais
+installé et testé en basse tension, voir `heating_controller_logic_bench.md`.
+Ce document reste une étude d'architecture et ne constitue
 pas un schéma de câblage secteur, un PCB validé ou une nomenclature d'achat.
 
 La [note du module deux voies](heating_controller_v03_module.md) et son
@@ -131,8 +133,9 @@ Le signal d'activité doit dépendre du calcul et du transfert correct des
 commandes, pas seulement d'un timer autonome. Le watchdog ne détecte pas
 toutes les erreurs logicielles ni un composant de sortie en court-circuit.
 
-Les GPIO et les interfaces proposés sont consignés dans la définition C,
-sans affectation dans le firmware installé. Les seuils des superviseurs,
+Les GPIO et les interfaces proposés sont consignés dans la définition C ;
+ARM et WDI ne sont pas l'interface d'inhibition directe du banc LED installé.
+Les seuils des superviseurs,
 le schéma électrique complet de la carte logique et les tests de banc
 restent à finaliser avant raccordement matériel.
 

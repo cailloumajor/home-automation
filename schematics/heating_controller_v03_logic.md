@@ -5,11 +5,14 @@ Les composants ci-dessous sont des candidats documentés ; aucun câblage
 physique ni essai de cette carte d'inhibition n'a été réalisé.
 Le schéma du module deux voies reste l'étude B.
 
-Un [premier banc D à seize LED](heating_controller_logic_bench.md) est
-maintenant préparé avec une configuration ESPHome distincte, validée et
-compilée, sans installation sur carte. Il vérifie les registres et les
-cycles avec une inhibition directe, avant ajout de la mémoire de défaut
-et des superviseurs définis ici. Son interface GPIO10 est différente.
+Le [banc E à quatre paires LED](heating_controller_logic_bench.md) utilise
+deux SN74HC595N et une configuration ESPHome distincte, installée et testée.
+Les registres, les cycles et l'inhibition directe ont été vérifiés en deux
+passes ; les durées restent des observations approximatives. Son interface
+GPIO10 est différente de l'ARM proposé ici.
+La [préparation du prochain banc d'inhibition](heating_controller_inhibit_bench.md)
+étudie une variante traversante pour la logique et un watchdog sur adaptateur,
+sans modifier le câblage actuel ni qualifier les pilotes des photorelais.
 
 ## Registres et interface des huit voies
 

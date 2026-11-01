@@ -283,6 +283,13 @@ Ce premier banc USB ne comprend pas
 le watchdog externe ; GPIO10 y contrôle directement OE_N, contrairement
 à son rôle ARM dans l'étude C. Il ne se raccorde à aucun module secteur.
 
+La [prochaine étape TBT](schematics/heating_controller_inhibit_bench.md)
+prépare l'inhibition mémorisée : candidats HC74/HC10 traversants et TPS3828-33
+sur adaptateur, avant schéma détaillé et firmware distinct. Le stock, le montage
+du composant CMS, les seuils, les rappels et les fronts restent à confirmer.
+Le banc LED installé reste désactivé ; aucune modification matérielle n'est
+effectuée pour cette nouvelle étude.
+
 ## Configuration locale
 
 Le point d'entrée est `heating_controller.yaml`, à la racine du dépôt.
