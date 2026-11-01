@@ -1,0 +1,69 @@
+# USB / 3.3 V / LED bench ONLY. Temporary fault-injection firmware.
+# Keep the same device identity; restore the normal MCP bench after the test.
+packages:
+  bench: !include heating_controller_mcp23017_bench.yaml
+
+esphome:
+  includes:
+    - <esp_system.h>
+    - <esp_task_wdt.h>
+    - <freertos/FreeRTOS.h>
+    - <freertos/task.h>
+
+button:
+  - platform: template
+    name: TEST Bloquer la boucle principale
+    entity_category: diagnostic
+    on_press:
+      - if:
+          condition:
+            switch.is_on: mcp_bench_run
+          then:
+            - script.execute: watchdog_test_block
+          else:
+            - logger.log:
+                level: WARN
+                format: "Watchdog test refused: LED bench is disabled"
+
+script:
+  - id: watchdog_test_block
+    mode: single
+    then:
+      - logger.log:
+          level: WARN
+          format: "Watchdog test requested; blocking in 2 seconds unless bench is disabled"
+      - delay: 2s
+      - if:
+          condition:
+            switch.is_on: mcp_bench_run
+          then:
+            - lambda: |-
+                static_assert(CONFIG_ESP_TASK_WDT_EN && CONFIG_ESP_TASK_WDT_INIT &&
+                              CONFIG_ESP_TASK_WDT_PANIC, "A fatal task watchdog is required");
+                static_assert(CONFIG_ESP_TASK_WDT_TIMEOUT_S == 5, "Expected a 5-second watchdog");
+                if (esp_task_wdt_status(nullptr) != ESP_OK) {
+                  ESP_LOGE("wdt_test", "Refused: current task is not subscribed to TWDT");
+                  return;
+                }
+                ESP_LOGW("wdt_test", "Blocking main loop without feeding TWDT; outputs unchanged");
+                // Yield to FreeRTOS, keeping interrupts and Thread alive. Do not
+                // use ESPHome delay(), which may feed the watchdog. No clean
+                // shutdown or MCP reset here: test the actual crash/reset path.
+                while (true) vTaskDelay(pdMS_TO_TICKS(10));
+
+text_sensor:
+  - platform: template
+    name: TEST Cause du dernier reset
+    entity_category: diagnostic
+    update_interval: 5s
+    lambda: |-
+      switch (esp_reset_reason()) {
+        case ESP_RST_TASK_WDT: return {"TASK_WDT"};
+        case ESP_RST_INT_WDT: return {"INT_WDT"};
+        case ESP_RST_WDT: return {"WDT"};
+        case ESP_RST_PANIC: return {"PANIC"};
+        case ESP_RST_SW: return {"SOFTWARE"};
+        case ESP_RST_POWERON: return {"POWER_ON"};
+        case ESP_RST_BROWNOUT: return {"BROWNOUT"};
+        default: return str_sprintf("OTHER_%d", int(esp_reset_reason()));
+      }

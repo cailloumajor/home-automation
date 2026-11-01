@@ -162,5 +162,57 @@ Reste à vérifier sur cette variante : reset watchdog.
 Les validations du banc
 595 ne sont pas transférées automatiquement à ce montage.
 
+## Essai du watchdog interne — préparé, pas encore validé
+
+Le point d'entrée temporaire `heating_controller_mcp23017_watchdog_test.yaml`
+inclut le banc normal et conserve son identité réseau et ses clés. Il ajoute
+un bouton diagnostic **TEST Bloquer la boucle principale** et un diagnostic
+**TEST Cause du dernier reset**. Le firmware normal ne possède pas ces entités.
+
+Le bouton exige un banc activé. Il attend deux secondes, puis vérifie encore
+que le banc est activé et que la tâche courante est abonnée au watchdog.
+Le test suspend ensuite indéfiniment la boucle ESPHome avec `vTaskDelay`,
+sans nourrir le watchdog, sans modifier les sorties et sans demander un
+redémarrage logiciel. Les interruptions et l'ordonnanceur FreeRTOS restent
+actifs. Ce test couvre ce blocage de boucle, pas toutes les pannes possibles.
+
+La compilation exige le watchdog de tâche actif, initialisé, fatal et réglé
+sur cinq secondes. La configuration de référence possède déjà ces réglages ;
+le firmware de test ne les modifie pas. Aucun déclenchement automatique au boot.
+Après redémarrage, le banc reste désactivé selon les mêmes actions de démarrage.
+
+Procédure pour les LED USB uniquement :
+
+1. Valider et compiler le point d'entrée de test, puis installer ce firmware
+    sur le contrôleur identifié. Ne pas lancer le test pendant une OTA.
+2. Vérifier le banc désactivé après installation, S1 relâché. Sur le port B,
+    régler Sèche-serviettes sur Éco et laisser les autres zones sur Arrêt.
+    Activer le banc : première paire avec deux couleurs, autres rouges seules.
+3. Ouvrir une capture des logs USB pour conserver le message de blocage,
+    le diagnostic du watchdog et le démarrage suivant. Aucun débogueur OpenOCD.
+4. Appuyer une seule fois sur le bouton TEST. Les LED peuvent conserver leur
+    état pendant le blocage ; attendre le déclenchement après environ cinq
+    secondes à partir du message de blocage, hors délai initial de deux secondes
+    et temps de redémarrage. Observer leur extinction au reset et leur maintien
+    éteint ensuite. Ne pas appuyer sur S1, couper l'USB ni demander un redémarrage
+    pendant cette observation : cela ne vérifierait pas le chemin watchdog.
+5. Après reconnexion, relever la cause du reset (TASK_WDT attendue, à recouper
+    avec les logs), vérifier les six modes sur Arrêt, banc désactivé et défaut
+    MCP inactif. Noter les durées observées et toute anomalie. Si le redémarrage
+    automatique n'arrive pas, le test est en échec ; couper l'USB pour récupérer.
+6. Recompiler puis réinstaller `heating_controller_mcp23017_bench.yaml` après
+    l'essai pour retirer l'injection de faute et vérifier le retour désactivé.
+    Les deux variantes partagent le répertoire de build : toujours recompiler
+    la variante voulue avant son téléversement.
+
+Commandes de préparation :
+
+```sh
+esphome config heating_controller_mcp23017_watchdog_test.yaml
+esphome compile heating_controller_mcp23017_watchdog_test.yaml
+```
+
+Source : [watchdogs ESP-IDF pour ESP32-H2](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32h2/api-reference/system/wdts.html).
+
 Références : [fiche technique Microchip, brochage et registres](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-MCP23S17-16-Bit-IO-Expander-with-Serial-Interface-DS20001952.pdf),
 [transport I²C ESPHome](https://esphome.io/components/i2c_device/).
