@@ -83,8 +83,9 @@ pas la charge des LED de photorelais 5 V de l'étude B.
 
 ## Organisation des quatre paires et déplacement du bloc
 
-Garder le bloc LED fixe : quatre lignes P1 à P4, rouge à gauche, verte à
-droite, chaque LED avec sa résistance de 2,2 kΩ. Repérer les huit fils
+Garder le bloc LED fixe : quatre lignes P1 à P4, verte « − » à gauche,
+rouge « + » à droite, selon le montage de l'utilisateur. Chaque LED conserve
+sa résistance de 2,2 kΩ. Repérer les huit fils
 d'entrée de 1 à 8. Monter les deux registres à cheval sur la rainure
 centrale de la breadboard, avec les encoches dans le même sens.
 Deux pattes d'une LED ne doivent pas partager un même groupe
