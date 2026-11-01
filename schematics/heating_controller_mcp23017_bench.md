@@ -169,8 +169,9 @@ séparé avant toute conclusion sur ce repli.
   reconnexion Home Assistant. Les états détaillés après reset et la valeur
   du diagnostic de cause du reset n'ont pas été relevés séparément.
 - Après le test watchdog : firmware normal revalidé, recompilé et réinstallé
-  par USB avec succès, pour retirer le bouton d'injection de faute. Le retour
-  des états dans Home Assistant après cette restauration reste à confirmer.
+  par USB avec succès, pour retirer le bouton d'injection de faute. L'utilisateur
+  confirme après restauration : banc désactivé, six modes sur Arrêt, défaut
+  inactif et toutes les LED éteintes.
 
 Les essais fonctionnels listés ci-dessus sont confirmés pour ce banc LED.
 La sensibilité au contact de la pointe sur RESET_N reste inexpliquée et sa
