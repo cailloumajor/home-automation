@@ -143,7 +143,11 @@ séparé avant toute conclusion sur ce repli.
   transfert, le maintien éteint, la reconnexion Home Assistant, le banc
   désactivé, les six modes sur Arrêt et le défaut inactif après redémarrage.
 
-Restent à vérifier sur cette variante : répétition des enveloppes après
+- Sur B, Sèche-serviettes en Confort −1 : une deuxième impulsion d'environ
+  3 secondes est observée vers 5 minutes après le changement de mode,
+  sans nouvelle commande. Les trois autres rouges restent allumées.
+
+Restent à vérifier sur cette variante : répétition de Confort −2 après
 300 secondes, défaut I²C provoqué et reset watchdog. Les validations du banc
 595 ne sont pas transférées automatiquement à ce montage.
 
