@@ -266,7 +266,14 @@ confirmés par l'utilisateur. L'API chiffrée répond : six zones à Arrêt,
 activation du banc désactivée, mot `0x5555`. Les quatre paires sur U1 ont
 permis de confirmer les modes Arrêt, Confort, Éco et Hors-gel, l'indépendance
 Séjour cuisine/Couloir réserve, S1 et les impulsions approximatives de 3 et 7 s.
-Les essais U2 et les contrôles physiques de redémarrage/OTA restent à réaliser.
+Les mêmes états fixes sont confirmés sur U2, ainsi que deux motifs indépendants
+sur ses quatre voies, S1, la désactivation HA et les impulsions approximatives
+de 3 et 7 s sur Sèche-serviettes. Le redémarrage depuis U2 en Éco laisse les
+LED éteintes, le banc désactivé et les six zones à Arrêt, mot `0x5555` :
+observation utilisateur et contrôle API concordants. L'OTA chiffrée du même
+firmware a réussi en 120,30 s depuis un banc activé en Éco ; la reconnexion
+API confirme le banc désactivé, six zones à Arrêt et le mot `0x5555`.
+L'observation physique de l'inhibition pendant ce transfert reste à confirmer.
 La V0.2 reste disponible
 pour un retour au firmware sans sorties matérielles.
 Ce premier banc USB ne comprend pas

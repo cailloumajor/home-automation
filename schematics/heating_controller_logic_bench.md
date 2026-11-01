@@ -6,8 +6,9 @@ radiateur, photorelais, module secteur ou alimentation secteur ouverte
 ne doit y être raccordé.
 
 Le firmware de banc a été validé, compilé et installé par USB le 1er novembre
-2026. Son API chiffrée répond ; les premiers essais physiques sur U1 sont
-confirmés ci-dessous, les essais U2 et les contrôles de redémarrage/OTA restent à réaliser.
+2026. Son API chiffrée répond ; les essais physiques U1, U2 et le repli après
+redémarrage sont confirmés ci-dessous. L'OTA chiffrée est réussie ; l'observation
+physique de l'inhibition pendant ce transfert reste à confirmer.
 La V0.2 de simulation reste disponible dans `heating_controller.yaml`.
 
 ## Documents et composants
@@ -271,10 +272,39 @@ avec les vertes à gauche et les rouges à droite :
 | S1 appuyé puis relâché sur cet état | Extinction de toutes les LED, puis retour de P4 seule |
 | Couloir réserve en Confort, Séjour cuisine en Confort −1 °C puis −2 °C | P1 à P3 rouge et verte allumées environ 3 s puis 7 s, P4 éteinte |
 
-Les durées sont des observations approximatives confirmées par l'utilisateur,
-pas des mesures instrumentées. La répétition physique à 300 s n'a pas été
-observée. Les essais U2, le repli après redémarrage et l'inhibition au début
-d'une OTA restent à vérifier physiquement. Aucun étage secteur n'est testé.
+### Résultats physiques sur U2 — 1er novembre 2026
+
+Après déplacement des huit fils USB débranché, l'utilisateur confirme :
+
+| Essai | Observation confirmée |
+| --- | --- |
+| Mise sous tension du banc, LED sur U2 | Huit LED éteintes |
+| Activation avec six modes Arrêt, `0x5555` | Quatre rouges allumées, quatre vertes éteintes |
+| Six modes Confort, `0x0000` | Huit LED éteintes |
+| Six modes Éco, `0xFFFF` | Huit LED allumées |
+| Six modes Hors-gel, `0xAAAA` | Quatre vertes allumées, quatre rouges éteintes |
+| Motif indépendant `0xB100` | P1 rouge seule, P2 éteinte, P3 rouge et verte, P4 verte seule |
+| Motif indépendant `0x4E00` | P1 verte seule, P2 rouge et verte, P3 éteinte, P4 rouge seule |
+| Appui S1 sur ce dernier motif | Huit LED éteintes pendant l'appui |
+| Désactivation HA pendant l'appui puis relâchement S1 | LED toujours éteintes |
+| Réactivation HA | Retour du motif précédent |
+| Sèche-serviettes en Confort −1 °C puis −2 °C, autres zones en Confort | P1 rouge et verte allumées environ 3 s puis 7 s ; P2 à P4 éteintes |
+| Redémarrage depuis les quatre zones U2 en Éco, S1 relâché | LED éteintes après redémarrage, banc désactivé, six zones à Arrêt, mot `0x5555` |
+
+Le repli après redémarrage a également été vérifié par l'API chiffrée avant
+de préparer l'essai OTA. Les observations physiques viennent de l'utilisateur.
+Les durées de 3 et 7 s sont approximatives, pas des mesures instrumentées.
+La répétition physique à 300 s n'a pas été observée. Aucun étage secteur n'est testé.
+
+### Essai OTA sur le banc U2
+
+Le même firmware validé et compilé a été transféré par OTA chiffrée depuis
+un banc activé avec les six zones en Éco, mot `0xFFFF`.
+ESPHome rapporte une réussite en 120,30 s : préparation 0,07 s, transfert
+119,84 s, validation finale 0,39 s. La reconnexion API chiffrée confirme
+ensuite le banc désactivé, les six zones à Arrêt et le mot `0x5555`.
+L'extinction physique des LED au début du transfert et leur maintien éteint
+après le redémarrage restent à confirmer par l'utilisateur.
 
 Reproduire les contrôles locaux :
 
