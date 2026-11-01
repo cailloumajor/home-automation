@@ -29,7 +29,7 @@ La V0.2 de simulation reste disponible dans `heating_controller.yaml`.
 | 4 | Résistance 10 kΩ, 1 %, 0,125 W ou plus | R18 à R21 |
 | 2 | Condensateur céramique 100 nF, tension nominale ≥6,3 V | C1, C2 |
 | 1 | Condensateur électrolytique radial 10 µF, stock 35 V ou 50 V utilisable | C3 |
-| 1 | Interrupteur SPST, fermé pour inhiber | S1 |
+| 1 | Poussoir à contact normalement ouvert ; maintenir appuyé pour inhiber | S1 |
 | Selon montage | Plaque d'essai, fils et supports DIP-16 | Connexions courtes |
 
 JOUT1, JOUT2 et JLED1 représentent des groupes de huit points de raccordement.
@@ -46,7 +46,7 @@ des céramiques non polarisées. Le schéma indique la polarité de C3.
 - Dix-sept LED après complément du stock : 4 rouges 5 mm, 4 vertes 5 mm,
   6 jaunes 5 mm et 3 jaunes 3 mm.
 - Toutes les résistances nécessaires, deux céramiques 100 nF, électrolytiques
-  10 µF 35/50 V, interrupteur, breadboard et fils disponibles.
+  10 µF 35/50 V, poussoir, breadboard et fils disponibles.
 - Référence des registres reçus confirmée par l'utilisateur : SN74HC595N.
   Deux sont utilisés ; le lot commandé en comporte dix.
 - SN74LVC244AN disponibles, mais inutilisables en remplacement des registres.
@@ -113,10 +113,12 @@ des sorties pouvant commander des niveaux opposés. La masse reste commune.
 | 7 | P4 rouge + | QG / 6 | FP4 +, couloir / réserve | FP8 +, chambre 3 |
 | 8 | P4 verte − | QH / 7 | FP4 −, couloir / réserve | FP8 −, chambre 3 |
 
-Pour changer de passe : désactiver le banc dans Home Assistant, fermer S1,
+Pour changer de passe : désactiver le banc dans Home Assistant,
 **débrancher l'USB**, déplacer les huit fils vers l'autre groupe, contrôler
-leur ordre puis rebrancher. Ouvrir S1 et activer explicitement le banc.
-Fermer S1 seul ne remplace pas la mise hors tension pendant le déplacement.
+leur ordre puis rebrancher. Le banc redémarre désactivé ; activer ensuite
+explicitement le banc avec S1 relâché. Il n'est pas nécessaire de maintenir
+le poussoir pendant le câblage hors tension. Un appui sur S1 ne remplace
+pas la mise hors tension pendant le déplacement.
 
 ## Interface de la DevKit
 
@@ -140,9 +142,10 @@ de U2 ; la broche 9 de U2 reste libre. Les détails du schéma font foi.
 Placer chaque 100 nF près de son registre, entre VCC et GND.
 
 R17 sépare GPIO10 du nœud OE_N. R18 tire OE_N à 3V3 au repos. Lorsque
-S1 est fermé, OE_N est forcé haut et toutes les sorties sont inhibées,
+S1 est maintenu appuyé, OE_N est forcé haut et toutes les sorties sont inhibées,
 même si GPIO10 demande leur activation ; R17 limite alors le courant.
-L'état de S1 n'est pas lu par le firmware.
+L'état de S1 n'est pas lu par le firmware. Le poussoir n'est pas verrouillable :
+relâcher S1 réautorise immédiatement les sorties si le banc est activé dans HA.
 
 **GPIO10 n'est pas ARM sur ce banc.** Il commande directement OE_N avec
 la polarité opposée à l'ARM de l'étude C. Ce câblage et ce firmware ne
@@ -158,7 +161,7 @@ API et Thread, sans en créer de nouveaux.
 - Les six modes initiaux sont Arrêt, sans restauration.
 - Le banc démarre désactivé : le mot `0x5555` est envoyé, mais OE_N reste haut.
 - L'interrupteur Home Assistant « Activer le banc LED » autorise ensuite
-  les sorties, si S1 est ouvert. Il revient désactivé après redémarrage.
+  les sorties, si S1 est relâché. Il revient désactivé après redémarrage.
 - Chaque mot est envoyé bit 15 en premier, avec une seule impulsion LATCH
   après les seize bits ; aucun état intermédiaire n'est présenté aux LED.
 - Les enveloppes sont échantillonnées toutes les 50 ms. Les trois appareils
@@ -169,7 +172,8 @@ API et Thread, sans en créer de nouveaux.
   sorties est observé. Aucun changement du YAML n'est nécessaire entre les passes.
 - Le début de l'OTA désactive le banc ; un échec OTA ne le réactive pas.
 - Le shutdown logiciel désactive aussi les sorties. Une panne logicielle
-  peut toutefois laisser un ancien mot actif : S1 est alors l'inhibition locale.
+  peut toutefois laisser un ancien mot actif : maintenir S1 inhibe les sorties
+  localement, sans mémoriser le défaut. Débrancher l'USB pour une inhibition durable.
 
 Cette variante emploie un transfert GPIO simple et testé plutôt que seize
 écritures successives via des sorties individuelles du composant ESPHome :
@@ -181,8 +185,9 @@ comporte pas encore le watchdog ni les superviseurs matériels de l'étude C.
 1. Garder la carte débranchée pendant le montage. Assembler le schéma
     basse tension avec huit LED, huit résistances et JLED1 relié à JOUT1
     seulement. Vérifier les rails, le sens des circuits et des LED.
-2. Fermer S1 pour inhiber les sorties. Vérifier l'absence de liaison entre
-    les rails d'alimentation avant de brancher le câble USB.
+2. Vérifier l'absence de court-circuit entre les rails avant de brancher
+    l'USB. Pour le premier démarrage, maintenir S1 appuyé pendant la mise
+    sous tension ; le banc doit également démarrer désactivé par logiciel.
 3. Avec les sorties inhibées, contrôler l'alimentation 3,3 V des registres.
     Ne pas ajouter une alimentation externe simultanée à l'USB de la DevKit.
 4. Valider et compiler la configuration, puis identifier le port USB réel :
@@ -214,16 +219,16 @@ les seize sorties ; ils ne changent pas avec le raccordement du bloc.
 
 | Essai | Résultat attendu |
 | --- | --- |
-| Démarrage avec S1 fermé | Aucune LED allumée, activation HA désactivée |
-| Ouvrir S1, activation HA toujours désactivée | Aucune LED allumée |
+| Démarrage avec S1 maintenu appuyé | Aucune LED allumée, activation HA désactivée |
+| Relâcher S1, activation HA toujours désactivée | Aucune LED allumée |
 | Activer le banc, modes initiaux Arrêt | Une LED positive sur chaque paire, mot `0x5555` |
 | Tous les modes Confort | Toutes les LED éteintes, mot `0x0000` |
 | Tous les modes Éco | Huit LED allumées, mot `0xFFFF` |
 | Tous les modes Hors-gel | LED négatives seules, mot `0xAAAA` |
 | Changer une zone | Seules ses paires changent ; Séjour cuisine agit sur P1/P2/P3 en passe U1, aucune paire en passe U2 |
 | Confort −1 °C, puis −2 °C | Les deux LED de la paire s'allument 3 s ou 7 s par cycle de 300 s, à la résolution du banc |
-| Fermer S1 pendant un mode actif | Toutes les LED s'éteignent ; la commande HA peut rester activée |
-| Désactiver l'activation HA, puis ouvrir S1 | Les LED restent éteintes |
+| Maintenir S1 appuyé pendant un mode actif | Toutes les LED s'éteignent ; la commande HA peut rester activée |
+| Désactiver l'activation HA, puis relâcher S1 | Les LED restent éteintes |
 | Redémarrer la carte | Modes Arrêt, activation HA désactivée ; aucun rallumage automatique |
 | Début d'une mise à jour OTA | Banc désactivé ; réactivation explicite requise |
 
@@ -256,14 +261,14 @@ avec les vertes à gauche et les rouges à droite :
 
 | Essai | Observation confirmée |
 | --- | --- |
-| Banc désactivé, S1 fermé puis ouvert | Toutes les LED éteintes |
+| Banc désactivé, S1 appuyé puis relâché | Toutes les LED éteintes |
 | Activation avec six modes Arrêt, `0x5555` | Quatre rouges allumées, quatre vertes éteintes |
 | Six modes Confort, `0x0000` | Huit LED éteintes |
 | Six modes Éco, `0xFFFF` | Huit LED allumées |
 | Six modes Hors-gel, `0xAAAA` | Quatre vertes allumées, quatre rouges éteintes |
 | Séjour cuisine en Confort, autres zones en Hors-gel, `0xAA80` | Seule la verte de P4 allumée |
 | Couloir réserve passé en Éco, `0xAAC0` | P4 rouge et verte allumées, P1 à P3 éteintes |
-| S1 fermé puis rouvert sur cet état | Extinction de toutes les LED, puis retour de P4 seule |
+| S1 appuyé puis relâché sur cet état | Extinction de toutes les LED, puis retour de P4 seule |
 | Couloir réserve en Confort, Séjour cuisine en Confort −1 °C puis −2 °C | P1 à P3 rouge et verte allumées environ 3 s puis 7 s, P4 éteinte |
 
 Les durées sont des observations approximatives confirmées par l'utilisateur,
