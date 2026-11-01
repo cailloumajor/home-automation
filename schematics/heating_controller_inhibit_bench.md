@@ -28,6 +28,12 @@ prévu de le raccorder au reset du H2 pour ce banc.
 
 ## Candidats pour une réalisation sur breadboard
 
+Stock précisé par l'utilisateur : aucun HC74 ni HC10 et aucun autre circuit
+logique que les HC595 et LVC244 déjà cités. Des breakouts FT232RL, un Raspberry
+Pi Pico W et un RP2040-One sont disponibles. Le prochain montage ne suppose
+donc pas la présence des composants candidats ci-dessous. Le choix entre
+adaptateur CMS à souder et module assemblé reste à préciser.
+
 | Quantité | Candidat | Rôle | Point pratique |
 | --- | --- | --- | --- |
 | 1 | SN74HC74N, PDIP-14 | Mémoire d'armement, effacement asynchrone | Traversant ; seconde bascule inutilisée à fixer à des niveaux définis |
