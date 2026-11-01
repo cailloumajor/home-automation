@@ -128,8 +128,17 @@ séparé avant toute conclusion sur ce repli.
   Sèche-serviettes Confort, Chambre 1 Éco, Chambre 2 Hors-gel, Chambre 3 Arrêt :
   paires respectivement éteinte, deux couleurs, verte seule et rouge seule.
 
-Restent à vérifier sur cette variante : repli au redémarrage, OTA, enveloppes
-Confort −1/−2, défaut I²C provoqué et reset watchdog. Les validations du banc
+- Redémarrage demandé depuis Home Assistant, banc activé avec des modes
+  différents sur B : après reconnexion, toutes les LED restent éteintes,
+  le banc est désactivé, les six sélecteurs sont sur Arrêt et le défaut est inactif.
+- Sur B, Sèche-serviettes en Confort −1 : les deux LED de la première paire
+  s'allument environ 3 secondes puis s'éteignent. En Confort −2 : environ
+  7 secondes puis extinction. Les trois autres paires gardent leur rouge seule.
+  Durées observées par l'utilisateur, sans mesure instrumentée ni observation
+  de la répétition après 300 secondes.
+
+Restent à vérifier sur cette variante : OTA, répétition des enveloppes après
+300 secondes, défaut I²C provoqué et reset watchdog. Les validations du banc
 595 ne sont pas transférées automatiquement à ce montage.
 
 Références : [fiche technique Microchip, brochage et registres](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-MCP23S17-16-Bit-IO-Expander-with-Serial-Interface-DS20001952.pdf),
