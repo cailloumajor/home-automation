@@ -1,0 +1,84 @@
+# Temporary diagnostic firmware for the same esplinky board.
+# Keep the existing UART settings and acquisition interval for comparison.
+packages:
+  device: !include esplinky.yaml
+
+esphome:
+  build_path: .esphome/build/esplinky_diagnostic
+
+logger:
+  level: INFO
+  hardware_uart: USB_SERIAL_JTAG
+  baud_rate: 115200
+
+uart:
+  rx_pin:
+    number: GPIO13
+    allow_other_uses: true
+  debug:
+    direction: RX
+    dummy_receiver: false
+    after:
+      bytes: 2048
+      timeout: 100ms
+    sequence:
+      - lambda: |-
+          size_t control[32] = {};
+          size_t high = 0;
+          static unsigned boundary_pos = 4;
+          static uint8_t boundary[4] = {};
+          for (const auto byte : bytes) {
+            if (byte < 32) control[byte]++;
+            if (byte >= 128) high++;
+            if (boundary_pos < 4) {
+              boundary[boundary_pos++] = byte;
+              if (boundary_pos == 4) {
+                ESP_LOGI("tic_capture", "After ETX: %02X %02X %02X %02X",
+                  boundary[0], boundary[1], boundary[2], boundary[3]);
+              }
+            }
+            if (byte == 0x03) boundary_pos = 0;
+          }
+          ESP_LOGI("tic_capture", "Read %u bytes, STX=%u, ETX=%u, LF=%u, CR=%u, SI=%u, SO=%u, high=%u",
+            static_cast<unsigned>(bytes.size()),
+            static_cast<unsigned>(control[2]), static_cast<unsigned>(control[3]),
+            static_cast<unsigned>(control[10]), static_cast<unsigned>(control[13]),
+            static_cast<unsigned>(control[15]), static_cast<unsigned>(control[14]),
+            static_cast<unsigned>(high));
+          for (unsigned c = 0; c < 32; c++) {
+            if (control[c] && c != 2 && c != 3 && c != 9 && c != 10 && c != 13 && c != 14 && c != 15) {
+              ESP_LOGI("tic_capture", "Other control %02X: %u", c,
+                static_cast<unsigned>(control[c]));
+            }
+          }
+
+sensor:
+  - platform: pulse_counter
+    id: tic_raw_edges
+    internal: true
+    pin:
+      number: GPIO13
+      allow_other_uses: true
+    use_pcnt: true
+    internal_filter: 0us
+    update_interval: 2s
+    filters:
+      - multiply: 0.0166666667
+    on_value:
+      - lambda: |-
+          ESP_LOGI("tic_edges", "Raw rising edges: %.1f/s", x);
+
+  - platform: pulse_counter
+    id: tic_filtered_edges
+    internal: true
+    pin:
+      number: GPIO13
+      allow_other_uses: true
+    use_pcnt: true
+    internal_filter: 13us
+    update_interval: 2s
+    filters:
+      - multiply: 0.0166666667
+    on_value:
+      - lambda: |-
+          ESP_LOGI("tic_edges", "Filtered rising edges: %.1f/s", x);
