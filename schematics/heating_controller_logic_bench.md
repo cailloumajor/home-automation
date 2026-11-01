@@ -1,8 +1,9 @@
-# Banc seize LED — prototype D, USB et 3,3 V
+# Banc quatre paires LED — prototype E, USB et 3,3 V
 
 Ce banc permet de vérifier les huit voies logiques avec deux registres
-et des LED d'indication. Aucun fil pilote, radiateur, photorelais, module
-secteur ou alimentation secteur ouverte ne doit y être raccordé.
+et quatre paires de LED réutilisées en deux passes. Aucun fil pilote,
+radiateur, photorelais, module secteur ou alimentation secteur ouverte
+ne doit y être raccordé.
 
 Le firmware V0.2 installé reste inchangé. Le firmware de banc est préparé,
 validé et compilé, mais **pas flashé ni testé physiquement**.
@@ -14,20 +15,25 @@ validé et compilé, mais **pas flashé ni testé physiquement**.
 - [Point d'entrée ESPHome](../heating_controller_logic_bench.yaml).
 - [Générateur du schéma](generate_heating_bench.py).
 
-![Banc USB à seize LED](heating_controller_logic_bench.svg)
+![Banc USB à quatre paires LED](heating_controller_logic_bench.svg)
 
 | Quantité | Composant proposé | Repères |
 | --- | --- | --- |
 | 1 | ESP32-H2-DevKitM-1 existante, alimentation USB uniquement | Carte de commande |
 | 2 | TI SN74AHC595N, boîtier traversant PDIP-16, sous 3,3 V | U1, U2 |
-| 16 | LED d'indication adaptées à une faible intensité ; stock multicolore utilisable | D1 à D16 |
-| 16 | Résistance 2,2 kΩ, 1 %, 0,125 W ou plus | R1 à R16 |
+| 4 + 4 | LED d'indication rouges et vertes adaptées à une faible intensité | D1 à D8 |
+| 8 | Résistance 2,2 kΩ, 1 %, 0,125 W ou plus | R1 à R8 |
 | 1 | Résistance 1 kΩ, 1 %, 0,125 W ou plus | R17 |
 | 4 | Résistance 10 kΩ, 1 %, 0,125 W ou plus | R18 à R21 |
 | 2 | Condensateur céramique 100 nF, tension nominale ≥6,3 V | C1, C2 |
 | 1 | Condensateur électrolytique radial 10 µF, stock 35 V ou 50 V utilisable | C3 |
 | 1 | Interrupteur SPST, fermé pour inhiber | S1 |
 | Selon montage | Plaque d'essai, fils et supports DIP-16 | Connexions courtes |
+
+JOUT1, JOUT2 et JLED1 représentent des groupes de huit points de raccordement.
+Sur breadboard, de simples rangées repérées suffisent ; aucun connecteur spécial
+n'est indispensable. R17 à R21 conservent les repères du prototype précédent ;
+R9 à R16 et D9 à D16 ne sont plus montés.
 
 C3 est polarisé : borne + au 3V3, borne − au GND. Choisir le 35 V si son
 encombrement convient ; le 50 V convient également. Les 100 nF restent
@@ -39,24 +45,25 @@ des céramiques non polarisées. Le schéma indique la polarité de C3.
   6 jaunes 5 mm et 3 jaunes 3 mm.
 - Toutes les résistances nécessaires, deux céramiques 100 nF, électrolytiques
   10 µF 35/50 V, interrupteur, breadboard et fils disponibles.
-- SN74LVC244AN disponibles, mais aucun registre 595.
+- Deux registres 595 sont nécessaires ; l'utilisateur attend un lot de dix.
+  Réception et référence réelle à confirmer avant montage.
+- SN74LVC244AN disponibles, mais inutilisables en remplacement des registres.
 
 Les [SN74LVC244A](https://www.ti.com/lit/ds/symlink/sn74lvc244a.pdf) sont
 des buffers parallèles, sans registre à décalage ni verrou de mémorisation.
 Ils ne remplacent pas les deux 595 du schéma ou du firmware préparé.
 Leur utilisation demanderait un autre montage et une autre interface GPIO.
 
-Le stock permet maintenant de monter **les huit paires (16 LED)**,
-avec une LED jaune 5 mm de rechange. Aucune sortie n'a besoin d'être omise.
-
-Répartition possible : rouge/vert sur FP1, FP2, FP3 et FP5 ; jaune 5 mm /
-jaune 3 mm sur FP6, FP7 et FP8 ; deux jaunes 5 mm sur FP4/réserve.
-Garder le repérage +/− par étiquette.
+Le montage retenu utilise **quatre paires rouge/verte**, soit huit LED et
+huit résistances. Chaque paire P1 à P4 porte une LED rouge « + » et une verte
+« − ». Ces signes désignent les alternances simulées ; toutes les anodes
+sont alimentées par une sortie via leur résistance et les cathodes vont au GND.
+Les neuf autres LED restent en réserve.
 Conserver 2,2 kΩ pour commencer ; la luminosité peut varier avec la couleur.
 Les références exactes des LED ne sont pas connues et les courants n'ont
 pas été mesurés.
 
-Le montage série prévu reste en attente de deux registres compatibles,
+Le montage série prévu nécessite deux registres compatibles,
 de préférence les SN74AHC595N indiqués ci-dessous. Aucun remplacement
 du 595 par le 244 n'est validé.
 
@@ -67,11 +74,42 @@ Ne pas substituer un 74HCT595 alimenté en 5 V sur la base du seul numéro
 Les LED sont directement alimentées par les sorties via leurs résistances.
 Même en supposant une chute LED nulle, 3,6 V et une résistance à −1 %,
 le courant reste inférieur à 1,66 mA par sortie, soit 13,3 mA pour huit
-sorties. Ces calculs sont des budgets conservateurs de banc ; les valeurs
+sorties. Un seul registre alimente le bloc de huit LED à la fois.
+Ces calculs sont des budgets conservateurs de banc ; les valeurs
 réelles dépendent des LED et seront relevées à la mise en service.
 
 Le banc utilise des LED d'indication à faible courant : il ne reproduit
 pas la charge des LED de photorelais 5 V de l'étude B.
+
+## Organisation des quatre paires et déplacement du bloc
+
+Garder le bloc LED fixe : quatre lignes P1 à P4, rouge à gauche, verte à
+droite, chaque LED avec sa résistance de 2,2 kΩ. Repérer les huit fils
+d'entrée de 1 à 8. Monter les deux registres à cheval sur la rainure
+centrale de la breadboard, avec les encoches dans le même sens.
+Deux pattes d'une LED ne doivent pas partager un même groupe
+de cinq contacts reliés.
+
+Les deux registres restent alimentés et en cascade dans les deux passes.
+Relier les huit entrées JLED1 aux points de même numéro de **JOUT1 ou JOUT2**.
+Les deux groupes ne sont jamais reliés ensemble : cela court-circuiterait
+des sorties pouvant commander des niveaux opposés. La masse reste commune.
+
+| Entrée JLED1 | LED du bloc | Sortie / broche du 595 choisi | Passe U1 / JOUT1 | Passe U2 / JOUT2 |
+| --- | --- | --- | --- | --- |
+| 1 | P1 rouge + | QA / 15 | FP1 +, séjour 1 | FP5 +, sèche-serviettes |
+| 2 | P1 verte − | QB / 1 | FP1 −, séjour 1 | FP5 −, sèche-serviettes |
+| 3 | P2 rouge + | QC / 2 | FP2 +, séjour 2 | FP6 +, chambre 1 |
+| 4 | P2 verte − | QD / 3 | FP2 −, séjour 2 | FP6 −, chambre 1 |
+| 5 | P3 rouge + | QE / 4 | FP3 +, cuisine | FP7 +, chambre 2 |
+| 6 | P3 verte − | QF / 5 | FP3 −, cuisine | FP7 −, chambre 2 |
+| 7 | P4 rouge + | QG / 6 | FP4 +, couloir / réserve | FP8 +, chambre 3 |
+| 8 | P4 verte − | QH / 7 | FP4 −, couloir / réserve | FP8 −, chambre 3 |
+
+Pour changer de passe : désactiver le banc dans Home Assistant, fermer S1,
+**débrancher l'USB**, déplacer les huit fils vers l'autre groupe, contrôler
+leur ordre puis rebrancher. Ouvrir S1 et activer explicitement le banc.
+Fermer S1 seul ne remplace pas la mise hors tension pendant le déplacement.
 
 ## Interface de la DevKit
 
@@ -119,6 +157,9 @@ API et Thread, sans en créer de nouveaux.
 - Les enveloppes sont échantillonnées toutes les 50 ms. Les trois appareils
   Séjour cuisine partagent la même phase de cycle.
 - « Mot envoyé aux registres » affiche une commande, pas une mesure.
+- Le mot conserve seize bits : U1 correspond à l'octet faible (FP1 à FP4),
+  U2 à l'octet fort (FP5 à FP8). Le firmware ne sait pas quel groupe de
+  sorties est observé. Aucun changement du YAML n'est nécessaire entre les passes.
 - Le début de l'OTA désactive le banc ; un échec OTA ne le réactive pas.
 - Le shutdown logiciel désactive aussi les sorties. Une panne logicielle
   peut toutefois laisser un ancien mot actif : S1 est alors l'inhibition locale.
@@ -131,7 +172,8 @@ comporte pas encore le watchdog ni les superviseurs matériels de l'étude C.
 ## Montage et mise en service du banc
 
 1. Garder la carte débranchée pendant le montage. Assembler le schéma
-    basse tension et vérifier les rails, le sens des circuits et des LED.
+    basse tension avec huit LED, huit résistances et JLED1 relié à JOUT1
+    seulement. Vérifier les rails, le sens des circuits et des LED.
 2. Fermer S1 pour inhiber les sorties. Vérifier l'absence de liaison entre
     les rails d'alimentation avant de brancher le câble USB.
 3. Avec les sorties inhibées, contrôler l'alimentation 3,3 V des registres.
@@ -158,15 +200,20 @@ V0.2 reste disponible dans `heating_controller.yaml` pour le retour USB.
 
 ## Essais à réaliser une fois le montage prêt
 
+Effectuer les essais pour JOUT1 puis, après déplacement hors tension,
+pour JOUT2. Les résultats LED ci-dessous portent sur les quatre paires
+du groupe actuellement raccordé. Les mots affichés concernent toujours
+les seize sorties ; ils ne changent pas avec le raccordement du bloc.
+
 | Essai | Résultat attendu |
 | --- | --- |
 | Démarrage avec S1 fermé | Aucune LED allumée, activation HA désactivée |
 | Ouvrir S1, activation HA toujours désactivée | Aucune LED allumée |
 | Activer le banc, modes initiaux Arrêt | Une LED positive sur chaque paire, mot `0x5555` |
 | Tous les modes Confort | Toutes les LED éteintes, mot `0x0000` |
-| Tous les modes Éco | Seize LED allumées, mot `0xFFFF` |
+| Tous les modes Éco | Huit LED allumées, mot `0xFFFF` |
 | Tous les modes Hors-gel | LED négatives seules, mot `0xAAAA` |
-| Changer une zone | Seules ses paires changent ; Séjour cuisine agit sur FP1/FP2/FP3 |
+| Changer une zone | Seules ses paires changent ; Séjour cuisine agit sur P1/P2/P3 en passe U1, aucune paire en passe U2 |
 | Confort −1 °C, puis −2 °C | Les deux LED de la paire s'allument 3 s ou 7 s par cycle de 300 s, à la résolution du banc |
 | Fermer S1 pendant un mode actif | Toutes les LED s'éteignent ; la commande HA peut rester activée |
 | Désactiver l'activation HA, puis ouvrir S1 | Les LED restent éteintes |
@@ -176,15 +223,18 @@ V0.2 reste disponible dans `heating_controller.yaml` pour le retour USB.
 Ces résultats restent à observer physiquement. La lecture de l'état HA ne
 prouve pas le niveau réel des sorties. Le banc ne qualifie pas les charges
 fil pilote, les photorelais, les surtensions ou l'isolation secteur.
+Les deux passes ne permettent pas d'observer les seize sorties simultanément.
 
 ## Vérifications déjà effectuées
 
-- Configuration et compilation : ESPHome 2026.10.1, ESP-IDF 5.5.6, réussite.
+- Firmware inchangé, précédemment compilé : ESPHome 2026.10.1, ESP-IDF 5.5.6, réussite.
 - RAM : 38,7 % ; partition applicative : 42,1 %.
 - Tests C++ : mapping des huit paires, mots extrêmes, ordre des seize bits
   et impulsion unique de verrouillage, réussite.
+- Prototype E : configuration ESPHome validée avec ESPHome 2026.10.1.
 - ERC KiCad : zéro erreur et zéro avertissement. Contrôle des quarante nets
-  utiles : alimentation, cascade, polarités LED et inhibition, réussite.
+  utiles : alimentation, cascade, groupes de sorties séparés, huit résistances/LED
+  et inhibition, réussite.
 - SVG exporté et inspecté visuellement. Aucun flash ni essai physique du banc.
 
 Reproduire les contrôles locaux :

@@ -252,12 +252,17 @@ série et une coordination des protections secteur. Les mesures ou limites
 constructeur des entrées fil pilote restent nécessaires. Aucun résultat
 de simulation numérique ne constitue une qualification électrique.
 
-Le [banc seize LED D](schematics/heating_controller_logic_bench.md) dispose
+Le [banc quatre paires LED E](schematics/heating_controller_logic_bench.md) dispose
 d'un schéma KiCad/SVG, d'une liste de composants et d'une configuration
-racine séparée `heating_controller_logic_bench.yaml`. Configuration et
-compilation réussies ; tests C++ et contrôle des quarante nets utiles
-réussis ; ERC sans erreur ni avertissement. Le firmware V0.2 reste inchangé,
-aucun flash du banc n'a été effectué. Ce premier banc USB ne comprend pas
+racine séparée `heating_controller_logic_bench.yaml`. Les quatre paires
+rouge/verte et leurs huit résistances se raccordent successivement aux sorties
+de U1 (FP1 à FP4), puis U2 (FP5 à FP8), en déplaçant huit fils hors tension.
+Les deux registres restent en cascade. Le firmware du banc ne change pas :
+son mot de seize bits commande toujours les huit voies, observées en deux passes.
+Configuration validée, firmware précédemment compilé ; tests C++ et contrôle
+des quarante nets utiles réussis ; ERC sans erreur ni avertissement.
+Le firmware V0.2 reste inchangé, aucun flash du banc n'a été effectué.
+Ce premier banc USB ne comprend pas
 le watchdog externe ; GPIO10 y contrôle directement OE_N, contrairement
 à son rôle ARM dans l'étude C. Il ne se raccorde à aucun module secteur.
 

@@ -65,7 +65,7 @@ class Drawing:
         self.parts.append(f'(text {quote(value)} (at {x} {y} 0) '
             f'(effects (font (size {size} {size})) (justify left)) (uuid "{self.uid()}"))')
 
-    def save(self, directory, title):
+    def save(self, directory, title, date="2026-10-31", revision="D-banc-TBT"):
         directory = Path(directory)
         def snap(match):
             tag, x, y = match.groups()
@@ -75,7 +75,7 @@ class Drawing:
         (directory / f"{self.stem}.kicad_sch").write_text(
             f'(kicad_sch (version 20250114) (generator "eeschema") '
             f'(uuid "{self.root}") (paper "A3") '
-            f'(title_block (title {quote(title)}) (date "2026-10-31") (rev "D-banc-TBT")) '
+            f'(title_block (title {quote(title)}) (date {quote(date)}) (rev {quote(revision)})) '
             f'(lib_symbols {libs})\n{placed})\n')
         (directory / f"{self.stem}.kicad_pro").write_text('{}\n')
         local = libs.replace(f'(symbol "{self.library}:', '(symbol "')
