@@ -7,6 +7,10 @@
 Les étapes suivantes utiliseront des branches distinctes si leur périmètre
 diffère : banc TBT, commutation secteur, puis comptage.
 
+La variante MCP23017 est préparée sur `heating/v0.3-mcp23017-bench`.
+Son firmware et ses tests hôtes ne constituent pas une validation matérielle.
+Le banc 595 installé reste décrit sur la branche précédente.
+
 Le tag annoté local `heating-v0.2` désigne uniquement le firmware de
 simulation validé sur carte : Thread/API, six zones, commandes simulées,
 redémarrage, interruption Home Assistant et interruption du Border Router.

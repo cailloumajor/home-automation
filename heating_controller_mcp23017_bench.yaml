@@ -1,0 +1,132 @@
+# USB / 3.3 V / LED bench ONLY. RESET_N wiring differs from the 595 bench OE_N.
+substitutions:
+  devicename: heating-controller-mcp-bench
+
+packages:
+  controller: !include heating_controller.yaml
+
+esphome:
+  friendly_name: Banc MCP23017 chauffage
+  includes:
+    - inc/heating_bench.h
+    - inc/heating_mcp23017_bench.h
+  on_boot:
+    priority: -100
+    then:
+      - switch.turn_off: mcp_bench_run
+      - script.execute: mcp_update_word
+  on_shutdown:
+    priority: 700
+    then:
+      - lambda: |-
+          heating_mcp23017_bench::controller().disarm([](bool release) {
+            id(mcp_reset_release).set_state(release);
+          });
+
+i2c:
+  sda: GPIO0
+  scl: GPIO1
+  scan: false
+  frequency: 100kHz
+
+# Use the native generic I2C transport, not per-pin MCP outputs: this bench
+# explicitly owns reset, preload, port writes, verification and fault latching.
+i2c_device:
+  - id: mcp_bench_device
+    address: 0x20
+
+output:
+  - platform: gpio
+    id: mcp_reset_release
+    pin: GPIO10
+
+globals:
+  - id: mcp_bench_word
+    type: uint16_t
+    restore_value: false
+    initial_value: '0x5555'
+
+script:
+  - id: mcp_update_word
+    then:
+      - lambda: |-
+          const uint32_t now = millis();
+          const std::array<fil_pilote_simulation::Signal, 6> zones = {{
+            fil_pilote_simulation::signal(id(living_mode), uint32_t(now - id(living_cycle_start))),
+            fil_pilote_simulation::signal(id(bathroom_mode), uint32_t(now - id(bathroom_cycle_start))),
+            fil_pilote_simulation::signal(id(bedroom_1_mode), uint32_t(now - id(bedroom_1_cycle_start))),
+            fil_pilote_simulation::signal(id(bedroom_2_mode), uint32_t(now - id(bedroom_2_cycle_start))),
+            fil_pilote_simulation::signal(id(bedroom_3_mode), uint32_t(now - id(bedroom_3_cycle_start))),
+            fil_pilote_simulation::signal(id(corridor_mode), uint32_t(now - id(corridor_cycle_start))),
+          }};
+          id(mcp_bench_word) = heating_bench::word(zones);
+
+interval:
+  - interval: 50ms
+    then:
+      - script.execute: mcp_update_word
+      - lambda: |-
+          if (!id(mcp_bench_run).state) return;
+          const bool ok = heating_mcp23017_bench::controller().refresh(id(mcp_bench_word),
+            [](uint8_t reg, const uint8_t *data, uint8_t len) {
+              return id(mcp_bench_device).write_bytes(reg, data, len);
+            },
+            [](uint8_t reg, uint8_t *data, uint8_t len) {
+              return id(mcp_bench_device).read_bytes(reg, data, len);
+            },
+            [](bool release) { id(mcp_reset_release).set_state(release); });
+          if (!ok) {
+            ESP_LOGW("mcp_bench", "Transfer or register check failed; reset held active");
+            id(mcp_bench_run).publish_state(false);
+          }
+
+switch:
+  - platform: template
+    id: mcp_bench_run
+    name: Activer le banc LED
+    entity_category: config
+    optimistic: false
+    restore_mode: ALWAYS_OFF
+    turn_on_action:
+      - script.execute: mcp_update_word
+      - lambda: |-
+          const bool ok = heating_mcp23017_bench::controller().arm(id(mcp_bench_word),
+            [](uint8_t reg, const uint8_t *data, uint8_t len) {
+              return id(mcp_bench_device).write_bytes(reg, data, len);
+            },
+            [](uint8_t reg, uint8_t *data, uint8_t len) {
+              return id(mcp_bench_device).read_bytes(reg, data, len);
+            },
+            [](bool release) { id(mcp_reset_release).set_state(release); },
+            [](uint32_t us) { delayMicroseconds(us); });
+          if (!ok) ESP_LOGW("mcp_bench", "Activation failed; reset held active");
+          id(mcp_bench_run).publish_state(ok);
+    turn_off_action:
+      - lambda: |-
+          heating_mcp23017_bench::controller().disarm([](bool release) {
+            id(mcp_reset_release).set_state(release);
+          });
+          id(mcp_bench_run).publish_state(false);
+
+binary_sensor:
+  - platform: template
+    name: Défaut du banc MCP23017
+    entity_category: diagnostic
+    lambda: return heating_mcp23017_bench::controller().fault() != heating_mcp23017_bench::Fault::NONE;
+
+text_sensor:
+  - platform: template
+    name: Mot demandé au MCP23017
+    entity_category: diagnostic
+    update_interval: 1s
+    lambda: |-
+      char value[7];
+      snprintf(value, sizeof(value), "0x%04X", unsigned(id(mcp_bench_word)));
+      return std::string(value);
+
+ota:
+  - platform: esphome
+    encryption:
+    on_begin:
+      then:
+        - switch.turn_off: mcp_bench_run
