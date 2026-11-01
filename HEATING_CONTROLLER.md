@@ -6,7 +6,7 @@ le redémarrage, l'OTA, les impulsions et leur répétition, le défaut I²C ave
 réactivation volontaire et le repli après blocage watchdog sont confirmés.
 La sensibilité constatée lors de la mesure de RESET_N n'est plus reproduite
 sur une dizaine de contacts après ajout d'un filtre 100 nF. S1 et le redémarrage
-sont revérifiés avec ce filtre ; le watchdog reste à revérifier. L'origine du
+sont revérifiés avec ce filtre, ainsi que le repli après watchdog. L'origine du
 transitoire et la marge électrique restent à établir ; ces essais ne qualifient
 aucun étage secteur.
 

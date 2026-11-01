@@ -236,9 +236,19 @@ Résultats confirmés avec le filtre :
   LED restent éteintes après reconnexion, banc désactivé, six modes sur Arrêt
   et défaut inactif.
 
+- Test watchdog répété avec le filtre : message de blocage à 19:03:32,150,
+  déclenchement `task_wdt` pour `loopTask` à 19:03:37,073, puis redémarrage
+  à 19:03:37,565 dans la capture USB. L'utilisateur confirme l'extinction
+  des LED, leur maintien éteint et la reconnexion Home Assistant. Intervalle
+  observé dans les logs d'environ 4,92 secondes avant le diagnostic watchdog,
+  sans mesure instrumentée de la transition physique de RESET_N.
+
 Ces résultats renforcent l'hypothèse d'un transitoire sur RESET_N, sans en
-identifier l'origine ni mesurer sa forme. Le test watchdog ci-dessous a été
-réussi avant ajout du filtre ; sa répétition avec le filtre reste à faire.
+identifier l'origine ni mesurer sa forme. Le filtre passe les essais de
+contact de pointe, de S1, de redémarrage commandé et de reset watchdog.
+Après ce second test watchdog, le firmware normal avec diagnostic détaillé
+est revalidé, recompilé et réinstallé par USB avec succès. La confirmation
+des états Home Assistant après cette dernière restauration reste attendue.
 
 ## Essai du watchdog interne — procédure et firmware temporaire
 
