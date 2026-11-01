@@ -151,7 +151,14 @@ séparé avant toute conclusion sur ce repli.
   impulsions d'environ 7 secondes espacées de 5 minutes. Cette observation
   complète le test de répétition, sans mesure instrumentée de précision.
 
-Restent à vérifier sur cette variante : défaut I²C provoqué et reset watchdog.
+- Perte I²C provoquée, banc activé et Sèche-serviettes en Éco : retrait du
+  seul fil SDA entre GPIO0 et la broche 13. L'utilisateur confirme l'extinction
+  de toutes les LED, la désactivation du banc et le défaut actif. Après
+  reconnexion de SDA, les LED restent éteintes, le banc désactivé et le défaut
+  actif. Une activation volontaire efface le défaut et rétablit les deux
+  couleurs sur la première paire et les rouges seules sur les trois autres.
+
+Reste à vérifier sur cette variante : reset watchdog.
 Les validations du banc
 595 ne sont pas transférées automatiquement à ce montage.
 
