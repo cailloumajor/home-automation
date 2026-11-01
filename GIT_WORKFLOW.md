@@ -15,7 +15,8 @@ Il ne qualifie aucun étage électrique.
 Le firmware du banc LED est validé, compilé et installé par USB ; son API
 répond avec le banc désactivé. Les essais physiques U1, U2 et de repli après
 redémarrage sont confirmés. L'OTA chiffrée et le repli logiciel après reconnexion
-sont vérifiés ; l'observation physique de l'inhibition OTA reste à confirmer.
+sont vérifiés ; l'utilisateur confirme aussi l'inhibition physique pendant
+l'OTA et après redémarrage. Voir le guide du banc pour les limites des essais.
 Les schémas V0.3 secteur sont des études. Aucun tag de validation
 matérielle ne sera créé avant les essais correspondants.
 

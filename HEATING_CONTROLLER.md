@@ -273,7 +273,10 @@ LED éteintes, le banc désactivé et les six zones à Arrêt, mot `0x5555` :
 observation utilisateur et contrôle API concordants. L'OTA chiffrée du même
 firmware a réussi en 120,30 s depuis un banc activé en Éco ; la reconnexion
 API confirme le banc désactivé, six zones à Arrêt et le mot `0x5555`.
-L'observation physique de l'inhibition pendant ce transfert reste à confirmer.
+L'utilisateur confirme l'extinction des huit LED au début de l'OTA et leur
+maintien éteint après redémarrage, S1 relâché. Les essais décrits du banc
+LED sont concluants ; la répétition physique à 300 s et les durées instrumentées
+ne sont pas vérifiées. Le banc reste désactivé avec six zones à Arrêt.
 La V0.2 reste disponible
 pour un retour au firmware sans sorties matérielles.
 Ce premier banc USB ne comprend pas

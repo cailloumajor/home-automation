@@ -7,8 +7,8 @@ ne doit y être raccordé.
 
 Le firmware de banc a été validé, compilé et installé par USB le 1er novembre
 2026. Son API chiffrée répond ; les essais physiques U1, U2 et le repli après
-redémarrage sont confirmés ci-dessous. L'OTA chiffrée est réussie ; l'observation
-physique de l'inhibition pendant ce transfert reste à confirmer.
+redémarrage sont confirmés ci-dessous. L'OTA chiffrée est réussie et l'utilisateur
+confirme l'inhibition physique des LED pendant le transfert et après redémarrage.
 La V0.2 de simulation reste disponible dans `heating_controller.yaml`.
 
 ## Documents et composants
@@ -303,8 +303,13 @@ un banc activé avec les six zones en Éco, mot `0xFFFF`.
 ESPHome rapporte une réussite en 120,30 s : préparation 0,07 s, transfert
 119,84 s, validation finale 0,39 s. La reconnexion API chiffrée confirme
 ensuite le banc désactivé, les six zones à Arrêt et le mot `0x5555`.
-L'extinction physique des LED au début du transfert et leur maintien éteint
-après le redémarrage restent à confirmer par l'utilisateur.
+L'utilisateur confirme l'extinction physique des huit LED au début du transfert
+et leur maintien éteint après le redémarrage, S1 relâché.
+Le banc est laissé désactivé avec les six zones à Arrêt, mot `0x5555`.
+
+Les essais décrits du banc LED sont concluants dans ces conditions, avec
+les limites d'observation précisées ci-dessus. Ils ne qualifient pas un étage
+fil pilote secteur, ni un watchdog matériel absent de ce montage.
 
 Reproduire les contrôles locaux :
 
